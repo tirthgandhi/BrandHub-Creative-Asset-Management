@@ -6,6 +6,9 @@ import { projectRouter } from "./projectRoutes.js";
 import { projectRequestRouter } from "./projectRequestRoutes.js";
 import { assetRouter } from "./assetRoutes.js";
 import { mediaRouter } from "./mediaRoutes.js";
+import { reviewRouter } from "./reviewRoutes.js";
+import { commentRouter } from "./commentRoutes.js";
+import { bookmarkRouter } from "./bookmarkRoutes.js";
 
 export function createApiRouter(options = {}) {
   const router = Router();
@@ -16,5 +19,11 @@ export function createApiRouter(options = {}) {
   router.use("/project-requests", projectRequestRouter);
   router.use("/assets", assetRouter);
   router.use("/media", mediaRouter);
+  // Phase 5 - Review endpoints are mounted on /api/assets for REST consistency
+  router.use("/assets", reviewRouter);
+  router.use("/assets", commentRouter);
+  router.use("/assets", bookmarkRouter);
+  router.use("/comments", commentRouter);
+  router.use("/bookmarks", bookmarkRouter);
   return router;
 }
