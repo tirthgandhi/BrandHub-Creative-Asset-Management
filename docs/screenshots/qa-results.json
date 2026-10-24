@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-10-24T11:05:06.688Z",
+  "results": [
+    {
+      "width": 375,
+      "dashboardOverflow": false,
+      "usersOverflow": false,
+      "consoleErrors": []
+    },
+    {
+      "width": 768,
+      "dashboardOverflow": false,
+      "usersOverflow": false,
+      "consoleErrors": []
+    },
+    {
+      "width": 1024,
+      "dashboardOverflow": false,
+      "usersOverflow": false,
+      "consoleErrors": []
+    },
+    {
+      "width": 1440,
+      "dashboardOverflow": false,
+      "usersOverflow": false,
+      "consoleErrors": []
+    }
+  ]
+}

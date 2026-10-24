@@ -32,3 +32,7 @@ This register separates recommendations from approved choices. The final phase p
 Dev B should validate project/request/asset ownership, category and lifecycle choices, deletion cleanup, and the member/public response boundary. Dev C should validate ReviewEvent fields, review transitions, approved-metadata audit behavior, comments/bookmarks visibility, and dashboard consumers. Both reviewers should confirm that the chosen session and file-delivery strategies support their phases before any implementation merges.
 
 Any changed decision must update `docs/api/API_CONTRACT.md` in the same pull request and list affected models, endpoints, frontend consumers, tests, and phase owners.
+
+## Interim Phase 1–2 main milestone
+
+The execution request proposes merging the completed Phase 1–2 foundation from `develop` to `main` before Phase 7. This remains **Proposed** on 2026-10-24. Dev A is the owner; Dev B and Dev C approvals are required. The merge must occur through a reviewed pull request after both phase gates pass and must not be performed by direct push.

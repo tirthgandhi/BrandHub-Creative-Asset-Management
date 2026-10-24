@@ -88,6 +88,7 @@ Every endpoint row below supplies all required fields: **Route** gives method an
 
 | Route | Owner/access | Input | Success | Errors/rules/security | Model/consumer |
 |---|---|---|---|---|---|
+| `GET /api/auth/csrf` | P2; public session bootstrap | session cookie; no path/query/body | `200 {"data":{"csrfToken":"..."}}` | Creates a random token tied to the server-side session; authenticated writes require it in `X-CSRF-Token`; contains no identity data | Session / API client bootstrap |
 | `POST /api/auth/register` | P2; public; creates Client only | JSON; body `{name,email,password,role?}`; name/email/password required; normalized unique email; password policy; supplied role ignored | `201 {"data":{"user":{"id":"u1","role":"client"}}}` | 409 duplicate, 422 invalid, 429; rate-limit and force role server-side; do not echo password | User, Session / `/register` |
 | `POST /api/auth/login` | P2; public | JSON; `{email,password}` required | `200 {"data":{"user":{"id":"u1","role":"client","mustChangePassword":false}}}` plus session cookie | 401 invalid/inactive, 429; generic credential error, rotate session ID, secure password comparison | User, Session / `/login` |
 | `POST /api/auth/logout` | P2; authenticated all roles | session+CSRF; no path/query/body | `204` empty | 401; invalidate server session and clear cookie; idempotent clearing allowed | Session / app logout controls |

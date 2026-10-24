@@ -7,7 +7,9 @@
     "dev": "node --watch server.js",
     "start": "node server.js",
     "test": "node --test tests/*.test.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "preview:local": "node scripts/localPreview.js",
+    "seed:admin": "node scripts/seedAdmin.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

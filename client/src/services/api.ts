@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 export type ApiError = { code: string; message: string; details: Array<{ field?: string; message: string }>; status?: number };
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL || "/api",
   withCredentials: true,
   headers: { Accept: "application/json" },
 });
