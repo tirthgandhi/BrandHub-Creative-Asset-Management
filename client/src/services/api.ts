@@ -16,6 +16,11 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use((response) => response, (error) => {
+  if (error?.response?.status === 401) window.dispatchEvent(new Event("brandhub:unauthenticated"));
+  return Promise.reject(error);
+});
+
 export function normalizeApiError(error: unknown): ApiError {
   if (axios.isAxiosError(error)) {
     const body = (error as AxiosError<{ error?: ApiError }>).response?.data;

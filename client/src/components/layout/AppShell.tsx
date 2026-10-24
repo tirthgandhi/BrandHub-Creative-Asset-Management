@@ -1,5 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useEffect, useState, type ReactNode } from "react";
-import { Bookmark, FolderKanban, Home, LogOut, Menu, Palette, Settings, Users, X } from "lucide-react";
+import { Bookmark, ClipboardList, Compass, FolderKanban, Home, LogOut, Menu, MessageSquareMore, Palette, Settings, Users, X } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { BrandLogo } from "../BrandLogo";
 import { ThemeSelector } from "../ui";
@@ -12,9 +13,9 @@ const common = [
   { to: "/app/bookmarks", label: "Bookmarks", icon: Bookmark },
 ];
 export const navigationByRole: Record<AppRole, typeof common> = {
-  admin: [...common, { to: "/app/admin/users", label: "Users", icon: Users }],
-  designer: common,
-  client: [...common, { to: "/app/explore", label: "Explore", icon: Palette }],
+  admin: [...common, { to: "/app/reviews", label: "Reviews", icon: MessageSquareMore }, { to: "/app/admin/requests", label: "Requests", icon: ClipboardList }, { to: "/app/admin/users", label: "Users", icon: Users }],
+  designer: [...common, { to: "/app/reviews", label: "Reviews", icon: MessageSquareMore }],
+  client: [...common, { to: "/app/explore", label: "Explore", icon: Compass }, { to: "/app/requests", label: "Requests", icon: ClipboardList }, { to: "/app/reviews", label: "Reviews", icon: MessageSquareMore }],
 };
 
 export function AppShell({ role, name, onLogout, children }: { role: AppRole; name: string; onLogout: () => void; children: ReactNode }) {
