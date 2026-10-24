@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import { BrandLogo } from "./BrandLogo";
 import { themes, themeCopy, type Preference, type Theme } from "../data/themes";
 type Props = {
@@ -57,6 +58,12 @@ export function Navbar({ theme, preference, select }: Props) {
             {label}
           </a>
         ))}
+        <Link className="nav-mobile-account" to="/login" onClick={() => setOpen(false)}>
+          Sign in
+        </Link>
+        <Link className="nav-mobile-account" to="/signup" onClick={() => setOpen(false)}>
+          Create account
+        </Link>
       </nav>
       <a href="#experience" aria-label="BRANDHUB home" className="nav-brand">
         <BrandLogo />
@@ -78,9 +85,10 @@ export function Navbar({ theme, preference, select }: Props) {
             ))}
           </select>
         </label>
-        <a className="nav-cta" href="#showcase">
-          Explore BRANDHUB <ArrowUpRight size={15} />
-        </a>
+        <Link className="nav-signin" to="/login">Sign in</Link>
+        <Link className="nav-cta" to="/signup">
+          Create account <ArrowUpRight size={15} />
+        </Link>
         <button
           className="menu-toggle"
           aria-label={open ? "Close navigation" : "Open navigation"}

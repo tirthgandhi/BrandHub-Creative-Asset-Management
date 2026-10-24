@@ -1,4 +1,5 @@
 import { ArrowUpRight, ArrowUp, Check } from "lucide-react";
+import { Link } from "react-router-dom";
 import { themes, themeCopy, type Theme } from "../data/themes";
 import { BrandLogo } from "./BrandLogo";
 import { CampaignArtwork } from "./CampaignArtwork";
@@ -260,9 +261,9 @@ export function FinalCTA() {
         <br />
         and bring your brand’s vision together.
       </p>
-      <a href="#experience" className="button button-lime">
-        Back to the experience <ArrowUpRight size={18} />
-      </a>
+      <Link to="/signup" className="button button-lime">
+        Create your space <ArrowUpRight size={18} />
+      </Link>
       <div className="giant-wordmark" aria-hidden="true">
         BRANDHUB
       </div>
@@ -285,6 +286,8 @@ export function Footer({ onCredits }: { onCredits: () => void }) {
           <a href="#vision">The Vision</a>
           <a href="#showcase">Showcase</a>
           <a href="#worlds">The Atmospheres</a>
+          <Link to="/login">Sign in</Link>
+          <Link to="/signup">Create account</Link>
         </nav>
         <a href="#experience" className="back-top" aria-label="Back to top">
           <ArrowUp size={20} />

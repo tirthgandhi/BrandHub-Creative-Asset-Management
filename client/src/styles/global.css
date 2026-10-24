@@ -166,6 +166,9 @@ p {
 .nav-links a[aria-current]:after {
   width: 100%;
 }
+.nav-links .nav-mobile-account {
+  display: none;
+}
 .brand-logo {
   display: inline-flex;
   align-items: center;
@@ -228,6 +231,14 @@ p {
 }
 .nav-cta:hover {
   background: #ffffff20;
+}
+.nav-signin {
+  font-size: 11px;
+  white-space: nowrap;
+}
+.nav-signin:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .menu-toggle {
   display: none;
@@ -1174,6 +1185,7 @@ footer {
 .footer-top nav {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
   font-size: 10px;
 }
 .back-top {
@@ -1438,6 +1450,16 @@ footer {
     flex-direction: column;
     gap: 2px;
     font-size: 14px;
+  }
+  .nav-links .nav-mobile-account {
+    display: block;
+  }
+  .nav-links .nav-mobile-account:nth-last-of-type(2) {
+    margin-top: 8px;
+    border-top: 1px solid #ffffff30;
+  }
+  .nav-signin {
+    display: none;
   }
   .hero {
     min-height: 780px;
