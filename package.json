@@ -1,0 +1,21 @@
+{
+  "name": "brandhub",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace client",
+    "build": "npm run build --workspace client",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspace client",
+    "test": "npm run test --workspaces --if-present",
+    "preview": "npm run preview --workspace client",
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server",
+    "start:server": "npm run start --workspace server",
+    "test:server": "npm run test --workspace server"
+  }
+}
