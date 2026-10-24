@@ -16,6 +16,7 @@
 .page-heading { margin-bottom:28px; }
 .page-heading h1 { font-size:clamp(32px,5vw,56px); letter-spacing:-2px; }
 .page-heading p { color:var(--app-muted); max-width:65ch; }
+.standalone-page { min-height:100svh; display:grid; place-items:center; padding:24px; background:var(--app-bg); color:var(--app-text); }.standalone-page>.surface-card { width:min(680px,100%); }.settings-card { display:grid; gap:16px; max-width:620px; }.settings-card h2 { font-size:26px; }
 .surface-card { background:var(--app-surface); border:1px solid var(--app-border); border-radius:20px; padding:clamp(20px,4vw,34px); box-shadow:var(--app-shadow); }
 .ui-button { min-height:46px; display:inline-flex; justify-content:center; align-items:center; gap:9px; border-radius:12px; padding:0 18px; font-weight:750; transition:transform .18s,background .18s; }
 .ui-button:hover:not(:disabled) { transform:translateY(-1px); }
