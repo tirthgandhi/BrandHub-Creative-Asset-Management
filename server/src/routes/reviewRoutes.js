@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { Router } from "express";
 import { Asset } from "../models/Asset.js";
 import { AssetRevision } from "../models/AssetRevision.js";
@@ -13,7 +12,8 @@ import { AppError } from "../utils/AppError.js";
 import { nextStatus, ACTIONS, STATUSES } from "../utils/reviewStateMachine.js";
 import { buildAssetScope } from "../services/assetAccess.js";
 import { projectAccess } from "../services/projectAccess.js";
-import { uploadFile, deleteFile, getSignedFileUrl, queueStorageCleanup } from "../services/cloudinaryStorage.js";
+import { withReviewTransaction } from "../services/reviewTransaction.js";
+import { uploadFile, deleteFile, queueStorageCleanup } from "../services/cloudinaryStorage.js";
 import { 
   submitAsset, 
   reviewAsset, 
@@ -21,7 +21,6 @@ import {
   uploadRevisionFields, 
   revisionList, 
   reviewHistory,
-  revisionFile 
 } from "../validation/reviewSchemas.js";
 
 export const reviewRouter = Router();
@@ -63,13 +62,14 @@ reviewRouter.post("/:id/submit",
   requireCsrf, 
   validate(submitAsset), 
   asyncHandler(async (req, res) => {
-    const { asset, project, isAssignedDesigner } = await getAssetWithPermissions(req, req.validated.params.id);
+    const { asset, isAssignedDesigner, isUploader } = await getAssetWithPermissions(req, req.validated.params.id);
     const { expectedVersion } = req.validated.body;
 
     // Verify expected version matches
     if (asset.currentVersion !== expectedVersion) {
       throw new AppError(409, "CONFLICT", "Asset version changed; refresh and try again");
     }
+    if (asset.status !== STATUSES.DRAFT) throw new AppError(409, "CONFLICT", "Asset state changed; refresh and try again");
 
     // Check state machine
     const transition = nextStatus(
@@ -83,32 +83,21 @@ reviewRouter.post("/:id/submit",
       throw new AppError(403, "FORBIDDEN", transition.error);
     }
 
-    // Atomic conditional update
-    const updated = await Asset.findOneAndUpdate(
-      { 
-        _id: asset._id, 
-        status: STATUSES.DRAFT,
-        currentVersion: expectedVersion 
-      },
-      {
-        $set: { status: STATUSES.IN_REVIEW }
-      },
-      { new: true }
-    ).select("+currentFile");
-
-    if (!updated) {
-      throw new AppError(409, "CONFLICT", "Asset state or version changed; refresh and try again");
-    }
-
-    // Create review event
-    await ReviewEvent.create({
-      assetId: asset._id,
-      version: asset.currentVersion,
-      actorId: req.user._id,
-      action: "submit",
-      fromStatus: STATUSES.DRAFT,
-      toStatus: STATUSES.IN_REVIEW,
-      note: "",
+    const updated = await withReviewTransaction(async (session) => {
+      const next = await Asset.findOneAndUpdate(
+        { _id: asset._id, status: STATUSES.DRAFT, currentVersion: expectedVersion },
+        { $set: { status: STATUSES.IN_REVIEW } },
+        { returnDocument: "after", ...(session ? { session } : {}) }
+      );
+      if (!next) throw new AppError(409, "CONFLICT", "Asset state or version changed; refresh and try again");
+      try {
+        await ReviewEvent.create([{ assetId: asset._id, version: expectedVersion, actorId: req.user._id,
+          action: "submit", fromStatus: STATUSES.DRAFT, toStatus: STATUSES.IN_REVIEW, note: "" }], session ? { session } : {});
+      } catch (error) {
+        if (!session) await Asset.updateOne({ _id: asset._id, status: STATUSES.IN_REVIEW, currentVersion: expectedVersion }, { $set: { status: STATUSES.DRAFT } });
+        throw error;
+      }
+      return next;
     });
 
     res.json({
@@ -131,13 +120,14 @@ reviewRouter.patch("/:id/review",
   requireCsrf, 
   validate(reviewAsset), 
   asyncHandler(async (req, res) => {
-    const { asset, project, isAssignedClient } = await getAssetWithPermissions(req, req.validated.params.id);
+    const { asset, isAssignedClient } = await getAssetWithPermissions(req, req.validated.params.id);
     const { decision, expectedVersion, note } = req.validated.body;
 
     // Verify expected version matches
     if (asset.currentVersion !== expectedVersion) {
       throw new AppError(409, "CONFLICT", "Asset version changed; refresh and try again");
     }
+    if (asset.status !== STATUSES.IN_REVIEW) throw new AppError(409, "CONFLICT", "Asset state changed; refresh and try again");
 
     // Determine action
     const action = decision === "approve" ? ACTIONS.APPROVE : ACTIONS.REQUEST_CHANGES;
@@ -165,29 +155,23 @@ reviewRouter.patch("/:id/review",
       updateData.reviewNote = note || "";
     }
 
-    const updated = await Asset.findOneAndUpdate(
-      {
-        _id: asset._id,
-        status: STATUSES.IN_REVIEW,
-        currentVersion: expectedVersion,
-      },
-      { $set: updateData },
-      { new: true }
-    ).select("+currentFile");
-
-    if (!updated) {
-      throw new AppError(409, "CONFLICT", "Asset state or version changed; refresh and try again");
-    }
-
-    // Create review event
-    const reviewEvent = await ReviewEvent.create({
-      assetId: asset._id,
-      version: asset.currentVersion,
-      actorId: req.user._id,
-      action: decision === "approve" ? "approve" : "request_changes",
-      fromStatus: STATUSES.IN_REVIEW,
-      toStatus: transition.status,
-      note: note || "",
+    const { updated, reviewEvent } = await withReviewTransaction(async (session) => {
+      const next = await Asset.findOneAndUpdate(
+        { _id: asset._id, status: STATUSES.IN_REVIEW, currentVersion: expectedVersion },
+        { $set: updateData },
+        { returnDocument: "after", ...(session ? { session } : {}) }
+      );
+      if (!next) throw new AppError(409, "CONFLICT", "Asset state or version changed; refresh and try again");
+      try {
+        const [event] = await ReviewEvent.create([{ assetId: asset._id, version: expectedVersion,
+          actorId: req.user._id, action: decision === "approve" ? "approve" : "request_changes",
+          fromStatus: STATUSES.IN_REVIEW, toStatus: transition.status, note: note || "" }], session ? { session } : {});
+        return { updated: next, reviewEvent: event };
+      } catch (error) {
+        if (!session) await Asset.updateOne({ _id: asset._id, status: transition.status, currentVersion: expectedVersion },
+          { $set: { status: STATUSES.IN_REVIEW, reviewedBy: asset.reviewedBy || null, reviewedAt: asset.reviewedAt || null, reviewNote: asset.reviewNote || "" } });
+        throw error;
+      }
     });
 
     res.json({
@@ -237,6 +221,7 @@ reviewRouter.post("/:id/revisions",
     if (asset.currentVersion !== expectedVersion) {
       throw new AppError(409, "CONFLICT", "Asset version changed; refresh and try again");
     }
+    if (asset.status !== STATUSES.CHANGES_REQUESTED) throw new AppError(409, "CONFLICT", "Asset state changed; refresh and try again");
 
     // Check state machine
     const transition = nextStatus(
@@ -273,46 +258,31 @@ reviewRouter.post("/:id/revisions",
         deliveryType: "authenticated",
       };
 
-      // Atomic update
-      const updated = await Asset.findOneAndUpdate(
-        {
-          _id: asset._id,
-          status: STATUSES.CHANGES_REQUESTED,
-          currentVersion: expectedVersion,
-        },
-        {
-          $set: {
-            status: STATUSES.DRAFT,
-            currentVersion: newVersion,
-            currentFile: file,
-            reviewNote: "",
-          },
-        },
-        { new: true }
-      ).select("+currentFile");
-
-      if (!updated) {
-        throw new AppError(409, "CONFLICT", "Asset state or version changed; refresh and try again");
-      }
-
-      // Create revision record
-      const revision = await AssetRevision.create({
-        assetId: asset._id,
-        version: newVersion,
-        file,
-        uploadedBy: req.user._id,
-        note: note || "",
-      });
-
-      // Create review event
-      await ReviewEvent.create({
-        assetId: asset._id,
-        version: newVersion,
-        actorId: req.user._id,
-        action: "revision_uploaded",
-        fromStatus: STATUSES.CHANGES_REQUESTED,
-        toStatus: STATUSES.DRAFT,
-        note: note || "",
+      const { updated, revision } = await withReviewTransaction(async (session) => {
+        const next = await Asset.findOneAndUpdate(
+          { _id: asset._id, status: STATUSES.CHANGES_REQUESTED, currentVersion: expectedVersion },
+          { $set: { status: STATUSES.DRAFT, currentVersion: newVersion, currentFile: file, reviewNote: "" } },
+          { returnDocument: "after", ...(session ? { session } : {}) }
+        ).select("+currentFile");
+        if (!next) throw new AppError(409, "CONFLICT", "Asset state or version changed; refresh and try again");
+        let savedRevision;
+        try {
+          [savedRevision] = await AssetRevision.create([{ assetId: asset._id, version: newVersion, file,
+            uploadedBy: req.user._id, note: note || "" }], session ? { session } : {});
+          await ReviewEvent.create([{ assetId: asset._id, version: newVersion, actorId: req.user._id,
+            action: "revision_uploaded", fromStatus: STATUSES.CHANGES_REQUESTED,
+            toStatus: STATUSES.DRAFT, note: note || "" }], session ? { session } : {});
+        } catch (error) {
+          if (!session) {
+            if (savedRevision) await savedRevision.deleteOne();
+            const rollback = await Asset.updateOne({ _id: asset._id, status: STATUSES.DRAFT, currentVersion: newVersion },
+              { $set: { status: STATUSES.CHANGES_REQUESTED, currentVersion: expectedVersion,
+                currentFile: asset.currentFile, reviewNote: asset.reviewNote || "" } });
+            if (rollback.matchedCount !== 1) console.error(`Review revision rollback needs repair for asset ${asset.id}`);
+          }
+          throw error;
+        }
+        return { updated: next, revision: savedRevision };
       });
 
       res.status(201).json({

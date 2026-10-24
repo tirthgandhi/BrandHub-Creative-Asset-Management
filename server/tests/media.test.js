@@ -56,6 +56,9 @@ test("GridFS upload persists bytes, enforces project access, serves ranges and c
   assert.deepEqual(partial.body, image.subarray(0, 4));
   assert.equal(partial.headers["content-range"], `bytes 0-3/${image.length}`);
   await owner.agent.get(media.url).set("Range", `bytes=${image.length}-`).expect(416);
+  const edited = await maker.agent.patch(`/api/media/${media.id}`).set("X-CSRF-Token", maker.csrf).send({ title: "Updated launch post", description: "Ready for the next campaign." }).expect(200);
+  assert.equal(edited.body.data.media.title, "Updated launch post");
+  await owner.agent.patch(`/api/media/${media.id}`).set("X-CSRF-Token", owner.csrf).send({ title: "Unauthorized edit", description: "" }).expect(403);
   await maker.agent.delete(`/api/media/${media.id}`).set("X-CSRF-Token", maker.csrf).expect(204);
   assert.equal(await MediaAsset.countDocuments({ _id: media.id }), 0);
   assert.equal((await mediaStorageUsage()).usedBytes, 0);
@@ -70,4 +73,20 @@ test("invalid content and oversized declarations leave no media or reservations"
   assert.equal(await MediaAsset.countDocuments(), 0);
   assert.equal((await mediaStorageUsage()).reservedBytes, 0);
   await maker.agent.post(path).set("X-CSRF-Token", maker.csrf).set("X-Upload-Size", String(21 * 1024 * 1024)).attach("file", bad, { filename: "fake.mp4", contentType: "video/mp4" }).expect(413);
+});
+
+test("a real MP4 reel survives GridFS upload and supports browser byte ranges", async () => {
+  const maker = await actor(designer.email);
+  const videoDir = path.resolve("..", "client", "public", "demo-media", "fashion", "videos");
+  const filename = (await fs.readdir(videoDir)).find((name) => name.endsWith(".mp4"));
+  assert.ok(filename);
+  const video = await fs.readFile(path.join(videoDir, filename));
+  const uploaded = await maker.agent.post(`/api/media/upload?projectId=${project.id}`).set("X-CSRF-Token", maker.csrf).set("X-Upload-Size", String(video.length)).field("title", "Campaign reel").field("category", "fashion").field("contentType", "reel").attach("file", video, { filename: "campaign.mp4", contentType: "video/mp4" });
+  assert.equal(uploaded.status, 201, JSON.stringify(uploaded.body));
+  const media = uploaded.body.data.media;
+  assert.equal(media.mediaType, "video");
+  assert.equal(media.contentType, "reel");
+  const range = await maker.agent.get(media.url).set("Range", "bytes=0-31").expect(206);
+  assert.deepEqual(range.body, video.subarray(0, 32));
+  await maker.agent.delete(`/api/media/${media.id}`).set("X-CSRF-Token", maker.csrf).expect(204);
 });

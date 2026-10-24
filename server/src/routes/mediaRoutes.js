@@ -75,23 +75,30 @@ function readMultipart(req, bucket, maxBytes) {
         const hash = crypto.createHash("sha256");
         let bytes = 0;
         let first = true;
+        let header = Buffer.alloc(0);
         let validationError = !format || format.mime !== info.mimeType ? new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File type and filename do not match a supported image or video") : null;
         try {
           for await (const chunk of file) {
             if (validationError) continue;
+            let payload = chunk;
             if (first) {
+              header = Buffer.concat([header, chunk]);
+              if (header.length < 12) continue;
+              payload = header;
+              header = Buffer.alloc(0);
               first = false;
-              if (!format.signature(chunk)) { validationError = new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File contents do not match the selected type"); continue; }
+              if (!format.signature(payload)) { validationError = new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File contents do not match the selected type"); continue; }
             }
-            bytes += chunk.length;
+            bytes += payload.length;
             if (bytes > maxBytes || bytes > (format.mediaType === "image" ? imageLimit() : videoLimit())) { validationError = new AppError(413, "PAYLOAD_TOO_LARGE", "File exceeds the configured size limit"); continue; }
             if (!upload) {
               upload = bucket.openUploadStream(`${crypto.randomUUID()}${extension}`, { metadata: { mimeType: format.mime } });
               upload.on("error", () => { /* Abort can emit after the rejected upload task has settled. */ });
             }
-            hash.update(chunk);
-            if (!upload.write(chunk)) await once(upload, "drain");
+            hash.update(payload);
+            if (!upload.write(payload)) await once(upload, "drain");
           }
+          if (first && !validationError) validationError = new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File is too small to match a supported image or video");
           if (validationError) throw validationError;
           if (file.truncated) throw new AppError(413, "PAYLOAD_TOO_LARGE", "File exceeds the configured size limit");
           if (!bytes) throw new AppError(422, "VALIDATION_ERROR", "Choose a nonempty file");

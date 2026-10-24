@@ -26,5 +26,6 @@ Authenticated project members can upload PNG, JPEG, WebP, MP4, or WebM files via
 - Server lint and client production build passed.
 - Atlas seed verification passed with the counts above.
 - Edge browser checks at 1440 px and 390 px loaded all 12 first-page images and video metadata from the second page, with no page errors or horizontal overflow. Screenshots are in `docs/screenshots/phase6-media-1440.png` and `phase6-media-390.png`.
+- A separate Atlas smoke check uploaded one WebP and one MP4 to GridFS. After restarting the API, both metadata and HTTP byte ranges were verified, and Edge played the MP4. The two temporary copies were then deleted; the 26 demo records and original files remained intact.
 
 For isolated local preview, set `VITE_API_PROXY_TARGET=http://127.0.0.1:5001` when running Vite on port 5174, and start the API with `PORT=5001` and `CLIENT_URL=http://127.0.0.1:5174`.

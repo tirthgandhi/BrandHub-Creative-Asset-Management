@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { Asset } from "../models/Asset.js";
 import { Bookmark } from "../models/Bookmark.js";
-import { Project } from "../models/Project.js";
 import { requireAuth, requirePasswordChanged } from "../middleware/auth.js";
 import { requireCsrf } from "../middleware/csrf.js";
 import { validate } from "../middleware/validate.js";
@@ -26,10 +25,10 @@ bookmarkRouter.get("/",
   asyncHandler(async (req, res) => {
     const { page, limit, sort } = req.validated.query;
 
-    const filter = { userId: req.user._id };
-
-    const [rows, total] = await Promise.all([
-      Bookmark.find(filter)
+    const scope = await buildAssetScope(req.user);
+    const visibleAssetIds = await Asset.distinct("_id", scope);
+    const filter = { userId: req.user._id, assetId: { $in: visibleAssetIds } };
+    const [rows, total] = await Promise.all([Bookmark.find(filter)
         .sort(sort)
         .skip((page - 1) * limit)
         .limit(limit)
@@ -41,9 +40,7 @@ bookmarkRouter.get("/",
             select: "title visibility status clientId designerIds",
           },
         })
-        .lean(),
-      Bookmark.countDocuments(filter),
-    ]);
+        .lean(), Bookmark.countDocuments(filter)]);
 
     // Filter out bookmarks for inaccessible assets
     const accessible = [];
@@ -56,11 +53,6 @@ bookmarkRouter.get("/",
       // Check if user still has access
       const access = projectAccess(req.user, project);
       if (access === "none") continue;
-
-      // Check asset status visibility
-      const scope = await buildAssetScope(req.user, { projectId: project._id });
-      const hasAssetAccess = await Asset.findOne({ _id: asset._id, ...scope });
-      if (!hasAssetAccess) continue;
 
       accessible.push({
         id: String(bookmark._id),
@@ -82,7 +74,7 @@ bookmarkRouter.get("/",
 
     res.json({
       data: accessible,
-      pagination: { page, limit, total: accessible.length },
+      pagination: { page, limit, total },
     });
   })
 );

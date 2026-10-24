@@ -2,7 +2,7 @@ import { api } from "./api";
 import type { Category, Pagination } from "./projects";
 
 export type Asset = { id: string; projectId: string; title: string; description?: string; category: Category; tags?: string[]; status: "draft" | "in_review" | "changes_requested" | "approved"; currentVersion: number; thumbnailUrl: string; isBookmarked: boolean; uploadedBy?: { id: string; name?: string }; createdAt: string };
-export type AssetFilters = { page?: number; search?: string; projectId?: string; category?: string; status?: string; uploadedBy?: "me"; sort?: string };
+export type AssetFilters = { page?: number; limit?: number; search?: string; projectId?: string; category?: string; status?: string; uploadedBy?: "me"; sort?: string };
 export async function listAssets(filters: AssetFilters) { return (await api.get<{ data: Asset[]; pagination: Pagination }>("/assets", { params: filters })).data; }
 export async function getAsset(id: string) { return (await api.get<{ data: { asset: Asset } }>(`/assets/${id}`)).data.data.asset; }
 export async function getAssetFile(id: string) { return (await api.get<{ data: { url: string; expiresAt: string } }>(`/assets/${id}/file`)).data.data; }

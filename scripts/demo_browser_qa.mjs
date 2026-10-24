@@ -21,8 +21,12 @@ try {
     await page.getByLabel("Password", { exact: true }).fill(process.env.ADMIN_PASSWORD);
     await page.getByRole("button", { name: "Sign in" }).click();
     await page.waitForURL("**/app/dashboard", { timeout: 15000 });
+    await page.locator(".dashboard-stat-card").first().waitFor();
+    const dashboardCards = await page.locator(".dashboard-stat-card").count();
+    const dashboardOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+    await page.screenshot({ path: fileURLToPath(new URL(`phase6-dashboard-${width}.png`, output)), fullPage: true });
     if (width < 500) await page.getByRole("button", { name: "Open navigation" }).click();
-    await page.getByRole("link", { name: "Media" }).click();
+    await page.getByRole("link", { name: "Media", exact: true }).click();
     await page.getByRole("heading", { name: "Project media" }).waitFor();
     await page.locator(".asset-card").first().waitFor();
     for (const image of await page.locator(".asset-card img").all()) {
@@ -40,9 +44,15 @@ try {
       await new Promise((resolve, reject) => { video.addEventListener("loadeddata", resolve, { once: true }); video.addEventListener("error", reject, { once: true }); video.load(); });
       return video.videoWidth > 0 && video.duration > 0;
     });
-    results.push({ width, cards, loadedImages: imageState.filter((item) => item.loaded).length, images: imageState.length, videos, playback, overflow, pageErrors: errors });
+    for (const [route, heading] of [["reviews", "Review queue"], ["bookmarks", "Bookmarks"], ["settings", "Settings"]]) {
+      await page.goto(`http://127.0.0.1:5174/app/${route}`, { waitUntil: "networkidle" });
+      await page.getByRole("heading", { name: heading, exact: true }).waitFor();
+    }
+    await page.getByLabel("Reduce motion").check();
+    const motion = await page.evaluate(() => document.documentElement.dataset.reduceMotion);
+    results.push({ width, dashboardCards, dashboardOverflow, cards, loadedImages: imageState.filter((item) => item.loaded).length, images: imageState.length, videos, playback, overflow, motion, pageErrors: errors });
     await context.close();
   }
 } finally { await browser.close(); }
 console.log(JSON.stringify(results, null, 2));
-if (results.some((result) => !result.cards || result.loadedImages !== result.images || !result.videos || !result.playback || result.overflow || result.pageErrors.length)) process.exitCode = 1;
+if (results.some((result) => result.dashboardCards < 6 || result.dashboardOverflow || !result.cards || result.loadedImages !== result.images || !result.videos || !result.playback || result.overflow || result.motion !== "true" || result.pageErrors.length)) process.exitCode = 1;

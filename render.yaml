@@ -25,3 +25,9 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      - key: MEDIA_IMAGE_MAX_BYTES
+        value: "5242880"
+      - key: MEDIA_VIDEO_MAX_BYTES
+        value: "20971520"
+      - key: GRIDFS_UPLOAD_BUDGET_BYTES
+        value: "262144000"

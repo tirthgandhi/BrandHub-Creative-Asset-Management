@@ -13,6 +13,7 @@ export type Media = {
   thumbnailUrl: string | null;
   fileSize: number;
   projectId: string;
+  uploadedBy: string | null;
   status: string;
   createdAt: string;
 };
@@ -42,3 +43,6 @@ export async function uploadMedia(input: { projectId: string; title: string; cat
     },
   })).data.data.media;
 }
+
+export async function updateMedia(id: string, title: string, description: string) { return (await api.patch<{ data: { media: Media } }>(`/media/${id}`, { title, description })).data.data.media; }
+export async function deleteMedia(id: string) { await api.delete(`/media/${id}`); }

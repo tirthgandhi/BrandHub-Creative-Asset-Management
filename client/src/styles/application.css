@@ -91,3 +91,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (max-width:800px) { .workspace-detail { grid-template-columns:1fr; }.workspace-heading { align-items:start; flex-direction:column; }.workspace-request { flex-direction:column; }.workspace-request-actions { justify-content:flex-start; } }
 @media (max-width:480px) { .workspace-form-row,.workspace-facts { grid-template-columns:1fr; }.workspace-filters { display:grid; }.workspace-pagination { justify-content:center; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
+.dashboard-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.dashboard-stat-card { display: flex; flex-direction: column; gap: .5rem; min-height: 150px; color: inherit; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+.dashboard-stat-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(38, 77, 130, .13); }
+.dashboard-stat-card strong { font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+.asset-collab-panel { border-top: 1px solid rgba(130, 157, 196, .28); padding-top: 1.3rem; margin-top: 1.3rem; display: grid; gap: .8rem; }
+.asset-collab-panel h3, .asset-collab-panel h4 { margin: 0; }
+.asset-collab-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
+.asset-collab-list li { padding: .75rem; border-radius: 14px; background: rgba(154, 186, 231, .11); overflow-wrap: anywhere; }
+.asset-collab-list small { display: block; opacity: .7; margin-top: .25rem; }
+.asset-collab-list p { margin: .5rem 0 0; }
+.dashboard-grid > .surface-card:not(.welcome-card) h2 { font-size: clamp(1.5rem, 2vw, 2rem); line-height: 1.15; }
+.profile-activity { margin-top: 1.5rem; }
+@media (max-width: 900px) { .dashboard-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .dashboard-stat-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .dashboard-stat-card { transition: none; } }
+[data-reduce-motion="true"] *, [data-reduce-motion="true"] *::before, [data-reduce-motion="true"] *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

@@ -1,24 +1,11 @@
 import { z } from "zod";
 import { objectIdString, pagination } from "./assetSchemas.js";
+import { envelope } from "./projectSchemas.js";
 
-// Get user's bookmarks
-export const bookmarkList = {
-  query: z.object({
-    ...pagination,
-    sort: z.enum(["createdAt", "-createdAt"]).default("-createdAt"),
-  }),
-};
-
-// Add bookmark
-export const createBookmark = {
-  params: z.object({
-    id: objectIdString,
-  }),
-};
-
-// Remove bookmark
-export const deleteBookmark = {
-  params: z.object({
-    id: objectIdString,
-  }),
-};
+const assetParams = z.object({ id: objectIdString });
+export const bookmarkList = envelope(z.any(), z.any(), z.object({
+  ...pagination,
+  sort: z.enum(["createdAt", "-createdAt"]).default("-createdAt"),
+}));
+export const createBookmark = envelope(z.any(), assetParams);
+export const deleteBookmark = envelope(z.any(), assetParams);

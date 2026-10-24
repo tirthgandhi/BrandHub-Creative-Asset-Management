@@ -12,7 +12,6 @@ import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage";
 import { VerifyEmailPage } from "../pages/auth/VerifyEmailPage";
 import { ResetPasswordPage } from "../pages/auth/ResetPasswordPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
-import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { SettingsPage } from "../pages/SettingsPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ProjectsPage } from "../pages/projects/ProjectsPage";
@@ -24,10 +23,10 @@ import { AssetUploadPage } from "../pages/assets/AssetUploadPage";
 import { AssetDetailPage } from "../pages/assets/AssetDetailPage";
 import { MediaLibraryPage } from "../pages/media/MediaLibraryPage";
 import { MediaUploadPage } from "../pages/media/MediaUploadPage";
+import { ReviewsPage } from "../pages/assets/ReviewsPage";
+import { BookmarksPage } from "../pages/assets/BookmarksPage";
 
 const LandingPage = lazy(() => import("../App"));
-
-const placeholder = (title: string, phase: string, description?: string) => <PlaceholderPage title={title} phase={phase} description={description} />;
 
 function AuthenticatedApp() {
   const { user, logout } = useAuth();
@@ -50,8 +49,8 @@ function AuthenticatedApp() {
     <Route path="assets/:id" element={<AssetDetailPage />} />
     <Route path="media" element={<MediaLibraryPage />} />
     <Route path="media/upload" element={<MediaUploadPage />} />
-    <Route path="reviews" element={placeholder("Reviews", "Phase 5")} />
-    <Route path="bookmarks" element={placeholder("Bookmarks", "Phase 5")} />
+    <Route path="reviews" element={<ReviewsPage />} />
+    <Route path="bookmarks" element={<BookmarksPage />} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes></AppShell>;
 }

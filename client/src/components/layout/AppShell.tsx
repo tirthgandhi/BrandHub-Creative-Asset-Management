@@ -23,6 +23,7 @@ export function AppShell({ role, name, onLogout, children }: { role: AppRole; na
   const [open, setOpen] = useState(false);
   const location = useLocation();
   useEffect(() => setOpen(false), [location.pathname]);
+  useEffect(() => { document.documentElement.dataset.reduceMotion = localStorage.getItem("brandhub:reduce-motion") === "true" ? "true" : "false"; }, []);
   useEffect(() => {
     const close = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
     document.addEventListener("keydown", close);

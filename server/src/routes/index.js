@@ -9,6 +9,7 @@ import { mediaRouter } from "./mediaRoutes.js";
 import { reviewRouter } from "./reviewRoutes.js";
 import { commentRouter } from "./commentRoutes.js";
 import { bookmarkRouter } from "./bookmarkRoutes.js";
+import { dashboardRouter } from "./dashboardRoutes.js";
 
 export function createApiRouter(options = {}) {
   const router = Router();
@@ -25,5 +26,6 @@ export function createApiRouter(options = {}) {
   router.use("/assets", bookmarkRouter);
   router.use("/comments", commentRouter);
   router.use("/bookmarks", bookmarkRouter);
+  router.use("/dashboard", dashboardRouter);
   return router;
 }

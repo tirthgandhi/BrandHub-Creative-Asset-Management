@@ -43,13 +43,11 @@ const schema = new mongoose.Schema({
 
 // Index for fetching asset history
 schema.index({ assetId: 1, createdAt: -1 });
+schema.index({ assetId: 1, version: 1, action: 1 }, { unique: true });
 
 // Prevent modification of historical events
-schema.pre("save", function(next) {
-  if (!this.isNew) {
-    return next(new Error("ReviewEvent records are immutable"));
-  }
-  next();
+schema.pre("save", function() {
+  if (!this.isNew) throw new Error("ReviewEvent records are immutable");
 });
 
 export const ReviewEvent = mongoose.models.ReviewEvent || mongoose.model("ReviewEvent", schema);
