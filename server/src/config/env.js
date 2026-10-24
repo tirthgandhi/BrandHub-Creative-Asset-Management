@@ -12,6 +12,7 @@ const schema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
+  CLOUDINARY_AUTH_TOKEN_KEY: z.string().optional(),
 });
 
 export function readEnv(source = process.env) {

@@ -1,10 +1,12 @@
 <div align="center">
 
-<!-- Landing-page implementation status; the full-stack specification below remains a roadmap. -->
+<!-- The full-stack specification below includes planned later phases. -->
 
-> **Current implementation:** The React + Vite client and Express + MongoDB API include the landing page, responsive application shell, four shared atmospheres (Morning, Afternoon, Sunset, Night) with Auto mode, Client registration, Mongo-backed sessions, login/logout, forced Designer password changes, protected routes, profiles, and Admin user management. Project, asset, collaboration, and final dashboard features remain assigned to Phases 3–7.
+> **Current implementation:** The React + Vite client and Express + MongoDB API include the landing page, responsive application shell, four shared atmospheres (Morning, Afternoon, Sunset, Night) with Auto mode, Client registration, Mongo-backed sessions, login/logout, forced Designer password changes, protected routes, profiles, Admin user management, project/request APIs and pages, and the Phase 4 asset library, upload, and detail modules. Cloudinary delivery requires private credentials and live integration verification. Review, comments, bookmarks, and final dashboard features remain later phases.
 
 > [Phase 1–2 handoff](docs/PHASE1_PHASE2_HANDOFF.md) · [Test report and browser evidence](docs/testing/PHASE1_PHASE2_TEST_REPORT.md)
+
+> [Phase 3–4 implementation and handoff](docs/PHASE3_PHASE4_HANDOFF.md)
 
 > [Atmosphere UI handoff](docs/ui/ATMOSPHERE_UI.md) explains the shared theme system and the recovery features that still require server-side email delivery.
 
@@ -539,10 +541,11 @@ PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 MONGODB_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=use_a_long_random_secret
+SESSION_SECRET=use_a_long_random_session_secret
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_AUTH_TOKEN_KEY=your_cloudinary_access_control_token_key
 ```
 
 If browser authentication uses HttpOnly cookies, configure appropriate `Secure`, `SameSite`, CORS, and CSRF protections. Never commit `.env` or API keys. Do not store sensitive login tokens in localStorage if using secure cookie-based sessions.

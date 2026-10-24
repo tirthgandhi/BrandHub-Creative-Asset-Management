@@ -15,6 +15,13 @@ import { NotFoundPage } from "../pages/NotFoundPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { SettingsPage } from "../pages/SettingsPage";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { ProjectsPage } from "../pages/projects/ProjectsPage";
+import { ProjectFormPage } from "../pages/projects/ProjectFormPage";
+import { ProjectDetailPage } from "../pages/projects/ProjectDetailPage";
+import { RequestsPage, RequestFormPage } from "../pages/requests/RequestsPage";
+import { AssetsPage } from "../pages/assets/AssetsPage";
+import { AssetUploadPage } from "../pages/assets/AssetUploadPage";
+import { AssetDetailPage } from "../pages/assets/AssetDetailPage";
 
 const LandingPage = lazy(() => import("../App"));
 
@@ -28,17 +35,17 @@ function AuthenticatedApp() {
     <Route path="profile" element={<ProfilePage />} />
     <Route path="settings" element={<SettingsPage />} />
     <Route path="admin/users" element={<ProtectedRoute roles={["admin"]}><UsersPage /></ProtectedRoute>} />
-    <Route path="admin/requests" element={<ProtectedRoute roles={["admin"]}>{placeholder("Project requests", "Phase 3")}</ProtectedRoute>} />
-    <Route path="projects" element={placeholder("Projects", "Phase 3")} />
-    <Route path="projects/new" element={<ProtectedRoute roles={["admin"]}>{placeholder("Create project", "Phase 3")}</ProtectedRoute>} />
-    <Route path="projects/:id" element={placeholder("Project detail", "Phase 3")} />
-    <Route path="projects/:id/edit" element={<ProtectedRoute roles={["admin"]}>{placeholder("Edit project", "Phase 3")}</ProtectedRoute>} />
-    <Route path="explore" element={<ProtectedRoute roles={["client"]}>{placeholder("Explore public projects", "Phase 3")}</ProtectedRoute>} />
-    <Route path="requests" element={<ProtectedRoute roles={["client"]}>{placeholder("My requests", "Phase 3")}</ProtectedRoute>} />
-    <Route path="requests/new" element={<ProtectedRoute roles={["client"]}>{placeholder("Request a project", "Phase 3")}</ProtectedRoute>} />
-    <Route path="assets" element={placeholder("Asset library", "Phase 4")} />
-    <Route path="assets/upload" element={<ProtectedRoute roles={["admin", "designer"]}>{placeholder("Upload asset", "Phase 4")}</ProtectedRoute>} />
-    <Route path="assets/:id" element={placeholder("Asset detail", "Phase 4")} />
+    <Route path="admin/requests" element={<ProtectedRoute roles={["admin"]}><RequestsPage admin /></ProtectedRoute>} />
+    <Route path="projects" element={<ProjectsPage />} />
+    <Route path="projects/new" element={<ProtectedRoute roles={["admin"]}><ProjectFormPage /></ProtectedRoute>} />
+    <Route path="projects/:id" element={<ProjectDetailPage />} />
+    <Route path="projects/:id/edit" element={<ProtectedRoute roles={["admin"]}><ProjectFormPage /></ProtectedRoute>} />
+    <Route path="explore" element={<ProtectedRoute roles={["client"]}><ProjectsPage explore /></ProtectedRoute>} />
+    <Route path="requests" element={<ProtectedRoute roles={["client"]}><RequestsPage /></ProtectedRoute>} />
+    <Route path="requests/new" element={<ProtectedRoute roles={["client"]}><RequestFormPage /></ProtectedRoute>} />
+    <Route path="assets" element={<AssetsPage />} />
+    <Route path="assets/upload" element={<ProtectedRoute roles={["admin", "designer"]}><AssetUploadPage /></ProtectedRoute>} />
+    <Route path="assets/:id" element={<AssetDetailPage />} />
     <Route path="reviews" element={placeholder("Reviews", "Phase 5")} />
     <Route path="bookmarks" element={placeholder("Bookmarks", "Phase 5")} />
     <Route path="*" element={<NotFoundPage />} />
