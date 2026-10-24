@@ -1,5 +1,5 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import LandingPage from "../App";
 import { AppShell } from "../components/layout/AppShell";
 import { useAuth } from "../context/AuthContext";
 import { DashboardPage } from "../pages/app/DashboardPage";
@@ -8,10 +8,15 @@ import { UsersPage } from "../pages/admin/UsersPage";
 import { ChangePasswordPage } from "../pages/auth/ChangePasswordPage";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
+import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage";
+import { VerifyEmailPage } from "../pages/auth/VerifyEmailPage";
+import { ResetPasswordPage } from "../pages/auth/ResetPasswordPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { SettingsPage } from "../pages/SettingsPage";
 import { ProtectedRoute } from "./ProtectedRoute";
+
+const LandingPage = lazy(() => import("../App"));
 
 const placeholder = (title: string, phase: string, description?: string) => <PlaceholderPage title={title} phase={phase} description={description} />;
 
@@ -41,13 +46,17 @@ function AuthenticatedApp() {
 }
 
 export function AppRouter() {
-  return <Routes>
+  return <Suspense fallback={<div className="route-loading" role="status">Loading BrandHub…</div>}><Routes>
     <Route path="/" element={<LandingPage />} />
     <Route path="/login" element={<LoginPage />} />
-    <Route path="/register" element={<RegisterPage />} />
+    <Route path="/signup" element={<RegisterPage />} />
+    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+    <Route path="/verify-email" element={<VerifyEmailPage />} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/change-password" element={<ChangePasswordPage />} />
+    <Route path="/register" element={<Navigate to="/signup" replace />} />
     <Route path="/app/*" element={<ProtectedRoute><AuthenticatedApp /></ProtectedRoute>} />
     <Route path="/home" element={<Navigate to="/" replace />} />
     <Route path="*" element={<NotFoundPage />} />
-  </Routes>;
+  </Routes></Suspense>;
 }

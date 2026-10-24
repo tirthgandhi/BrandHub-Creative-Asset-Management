@@ -1,0 +1,11 @@
+# Atmosphere UI handoff
+
+The landing page, authentication screens, and application shell now share one atmosphere preference. `client/src/context/AtmosphereContext.tsx` stores a manual choice in `brandhub-theme`; Auto selects Morning (05:00–10:59), Afternoon (11:00–16:29), Sunset (16:30–19:29), or Night (19:30–04:59) using the browser's local time. The document receives its theme before React loads, and the provider updates Auto mode while the page remains open. The former independent color and sky providers have been removed.
+
+Authentication pages use the existing session API for login, Client signup, and required password changes. Their page files use conventional names in `client/src/pages/auth/`; reusable controls are in `client/src/components/auth/AuthControls.tsx`. Existing landing media in `client/public/images/themes/` supplies the four atmospheric scenes. The interface respects reduced-motion settings and keeps image fallbacks behind CSS effects.
+
+The server has no email delivery, verification-code, or reset-token endpoints. The `/forgot-password`, `/verify-email`, and `/reset-password` routes therefore show their intended UI with disabled submission and a clear service notice. They do not claim a message was sent, a code was verified, or a password changed. Google sign-in and mandatory legal-policy acceptance are also absent because their supporting services and policy pages are not available. Do not enable those actions until the backend can issue and validate tokens, deliver email, enforce expiry and rate limits, and serve approved policy pages.
+
+The atmospheric design builds on the original BrandHub landing page and its licensed local media. Phase 3–7 workflows remain outside this UI update.
+
+The client typecheck, ESLint check, and production build passed after integration. Manual local-browser review covered desktop and 375 px mobile login, signup, and Admin dashboard views. Morning, Afternoon, and Night dashboard states remained readable, and the same Afternoon selection appeared on the landing page after navigation. The local preview's `/api/health` returned a connected database after its Vite proxy was restarted; Admin login then reached the dashboard.

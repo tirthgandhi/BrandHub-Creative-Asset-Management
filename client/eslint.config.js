@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import hooks from "eslint-plugin-react-hooks";
 import refresh from "eslint-plugin-react-refresh";
 export default tseslint.config(
-  { ignores: ["dist"] },
+  { ignores: ["dist/**", ".vite/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

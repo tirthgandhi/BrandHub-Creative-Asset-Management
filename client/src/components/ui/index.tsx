@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
 import { AlertCircle, CheckCircle2, Inbox, LockKeyhole, X } from "lucide-react";
-import { useTheme, type ThemePreference } from "../../context/ThemeContext";
+import { useAtmosphere } from "../../context/AtmosphereContext";
+import { themes, type Preference } from "../../data/themes";
 
 export function Button({ variant = "primary", loading, children, className = "", ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "danger" | "ghost"; loading?: boolean }) {
   return <button className={`ui-button ui-button--${variant} ${className}`} disabled={loading || props.disabled} {...props}>{loading ? <span className="ui-spinner" aria-hidden="true" /> : null}<span>{loading ? "Please wait" : children}</span></button>;
@@ -45,8 +46,8 @@ export function PermissionDenied() {
 }
 
 export function ThemeSelector() {
-  const { preference, setPreference } = useTheme();
-  return <label className="theme-control"><span>Theme</span><select value={preference} onChange={(event) => setPreference(event.target.value as ThemePreference)} aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></label>;
+  const { preference, select } = useAtmosphere();
+  return <label className="theme-control"><span>Atmosphere</span><select value={preference} onChange={(event) => select(event.target.value as Preference)} aria-label="Atmosphere"><option value="auto">Auto</option>{themes.map((theme) => <option key={theme} value={theme}>{theme[0].toUpperCase() + theme.slice(1)}</option>)}</select></label>;
 }
 
 export function ConfirmationModal({ open, title, children, confirmLabel = "Confirm", danger, onConfirm, onClose }: { open: boolean; title: string; children: ReactNode; confirmLabel?: string; danger?: boolean; onConfirm: () => void; onClose: () => void }) {

@@ -3,10 +3,14 @@
   <head>
     <script>
       (() => {
-        const saved = localStorage.getItem('brandhub-color-theme') || 'system';
-        const resolved = saved === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : saved;
-        document.documentElement.dataset.colorTheme = resolved;
-        document.documentElement.style.colorScheme = resolved;
+        let saved = null;
+        try { saved = localStorage.getItem('brandhub-theme') || localStorage.getItem('brandhub-sky-theme'); } catch { /* storage may be unavailable */ }
+        const minute = new Date().getHours() * 60 + new Date().getMinutes();
+        const automatic = minute >= 300 && minute < 660 ? 'morning' : minute >= 660 && minute < 990 ? 'afternoon' : minute >= 990 && minute < 1170 ? 'sunset' : 'night';
+        const theme = ['morning', 'afternoon', 'sunset', 'night'].includes(saved) ? saved : automatic;
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.skyTheme = theme;
+        document.documentElement.style.colorScheme = theme === 'morning' ? 'light' : 'dark';
       })();
     </script>
     <meta charset="UTF-8" />

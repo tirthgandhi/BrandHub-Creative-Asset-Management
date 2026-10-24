@@ -1,0 +1,1130 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   BRANDHUB atmosphere and authentication design system
+   Four atmospheric themes: morning · afternoon · sunset · night
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   1. THEME VARIABLES  (applied via data-sky-theme on <html>)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Auto / fallback = afternoon theme */
+:root,
+[data-sky-theme="afternoon"] {
+  --sky-bg:            #003B75;
+  --sky-grad-start:    #0757A3;
+  --sky-grad-end:      #0C78BE;
+  --sky-accent:        #FFD166;
+  --sky-text:          #FFFFFF;
+  --sky-text-muted:    #DCEFFF;
+  --sky-glass-bg:      rgba(255,255,255,0.12);
+  --sky-glass-border:  rgba(255,255,255,0.24);
+  --sky-glass-shadow:  0 24px 80px rgba(0,30,80,0.45);
+  --sky-input-bg:      rgba(255,255,255,0.10);
+  --sky-input-border:  rgba(255,255,255,0.25);
+  --sky-input-text:    #ffffff;
+  --sky-input-placeholder: rgba(255,255,255,0.45);
+  --sky-btn-bg:        #FFD166;
+  --sky-btn-text:      #1a1000;
+  --sky-btn-shadow:    0 8px 30px rgba(255,200,80,0.35);
+  --sky-link:          #a8d8ff;
+  --sky-focus:         #FFD166;
+  --sky-error:         #ff8f80;
+  --sky-success:       #7fffa8;
+  --sky-eyebrow:       rgba(220,240,255,0.65);
+  --sky-orb-main:      rgba(100,180,255,0.20);
+  --sky-orb-sec:       rgba(60,140,255,0.12);
+  --sky-cloud-color:   rgba(255,255,255,0.9);
+  --sky-star-color:    transparent;
+  --sky-theme-pill-bg: rgba(255,255,255,0.14);
+  --sky-theme-pill-border: rgba(255,255,255,0.28);
+}
+
+[data-sky-theme="morning"] {
+  --sky-bg:            #EAF7FF;
+  --sky-grad-start:    #D8F0FF;
+  --sky-grad-end:      #A6D9F7;
+  --sky-accent:        #F5B76E;
+  --sky-text:          #142D45;
+  --sky-text-muted:    #49667E;
+  --sky-glass-bg:      rgba(255,255,255,0.45);
+  --sky-glass-border:  rgba(255,255,255,0.70);
+  --sky-glass-shadow:  0 24px 80px rgba(20,60,100,0.12);
+  --sky-input-bg:      rgba(255,255,255,0.60);
+  --sky-input-border:  rgba(180,210,240,0.70);
+  --sky-input-text:    #142D45;
+  --sky-input-placeholder: rgba(73,102,126,0.55);
+  --sky-btn-bg:        #F5B76E;
+  --sky-btn-text:      #2a1a00;
+  --sky-btn-shadow:    0 8px 30px rgba(245,183,110,0.35);
+  --sky-link:          #0a5fa8;
+  --sky-focus:         #F5B76E;
+  --sky-error:         #c0392b;
+  --sky-success:       #1a7a45;
+  --sky-eyebrow:       rgba(20,45,69,0.55);
+  --sky-orb-main:      rgba(255,230,160,0.30);
+  --sky-orb-sec:       rgba(200,230,255,0.20);
+  --sky-cloud-color:   rgba(255,255,255,0.9);
+  --sky-star-color:    transparent;
+  --sky-theme-pill-bg: rgba(255,255,255,0.55);
+  --sky-theme-pill-border: rgba(180,210,240,0.55);
+}
+
+[data-sky-theme="sunset"] {
+  --sky-bg:            #281B40;
+  --sky-grad-start:    #FFB26B;
+  --sky-grad-end:      #D96599;
+  --sky-accent:        #FFB26B;
+  --sky-text:          #FFFFFF;
+  --sky-text-muted:    #ffdeca;
+  --sky-glass-bg:      rgba(255,255,255,0.14);
+  --sky-glass-border:  rgba(255,200,180,0.30);
+  --sky-glass-shadow:  0 24px 80px rgba(40,10,50,0.50);
+  --sky-input-bg:      rgba(255,255,255,0.11);
+  --sky-input-border:  rgba(255,180,160,0.30);
+  --sky-input-text:    #ffe8da;
+  --sky-input-placeholder: rgba(255,220,200,0.40);
+  --sky-btn-bg:        #FFB26B;
+  --sky-btn-text:      #2c0a00;
+  --sky-btn-shadow:    0 8px 30px rgba(255,120,80,0.40);
+  --sky-link:          #ffcba8;
+  --sky-focus:         #FFB26B;
+  --sky-error:         #ff9986;
+  --sky-success:       #85ffba;
+  --sky-eyebrow:       rgba(255,210,190,0.55);
+  --sky-orb-main:      rgba(255,140,80,0.22);
+  --sky-orb-sec:       rgba(180,60,140,0.18);
+  --sky-cloud-color:   rgba(255,210,180,0.85);
+  --sky-star-color:    transparent;
+  --sky-theme-pill-bg: rgba(255,255,255,0.14);
+  --sky-theme-pill-border: rgba(255,180,150,0.28);
+}
+
+[data-sky-theme="night"] {
+  --sky-bg:            #060F2B;
+  --sky-grad-start:    #142C56;
+  --sky-grad-end:      #334C7D;
+  --sky-accent:        #A5AEFF;
+  --sky-text:          #F5F7FF;
+  --sky-text-muted:    #a8b5d0;
+  --sky-glass-bg:      rgba(255,255,255,0.08);
+  --sky-glass-border:  rgba(165,174,255,0.18);
+  --sky-glass-shadow:  0 24px 80px rgba(0,5,30,0.60);
+  --sky-input-bg:      rgba(255,255,255,0.06);
+  --sky-input-border:  rgba(165,174,255,0.22);
+  --sky-input-text:    #F5F7FF;
+  --sky-input-placeholder: rgba(168,181,208,0.45);
+  --sky-btn-bg:        #A5AEFF;
+  --sky-btn-text:      #050d2a;
+  --sky-btn-shadow:    0 8px 30px rgba(130,140,255,0.30);
+  --sky-link:          #c0c8ff;
+  --sky-focus:         #A5AEFF;
+  --sky-error:         #ff8f84;
+  --sky-success:       #6bffb8;
+  --sky-eyebrow:       rgba(165,174,255,0.55);
+  --sky-orb-main:      rgba(90,100,220,0.18);
+  --sky-orb-sec:       rgba(40,60,160,0.12);
+  --sky-cloud-color:   rgba(80,100,160,0.60);
+  --sky-star-color:    #ffffff;
+  --sky-theme-pill-bg: rgba(255,255,255,0.08);
+  --sky-theme-pill-border: rgba(165,174,255,0.22);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   2. SKY AUTH LAYOUT
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-layout {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--sky-bg);
+  color: var(--sky-text);
+  overflow: hidden;
+  isolation: isolate;
+  transition: background 1.2s, color 0.8s;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   3. SKY BACKGROUND — Layers, Clouds, Stars, Orbs
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Sky image worlds */
+.sky-auth-world {
+  position: absolute;
+  inset: -4%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.4s ease-in-out;
+  transform: scale(1.05);
+  will-change: opacity;
+}
+
+.sky-auth-world--active {
+  opacity: 1;
+}
+
+.sky-auth-world--morning { filter: saturate(0.65) brightness(1.05); background-position: center 38%; }
+.sky-auth-world--afternoon { filter: saturate(0.9); }
+.sky-auth-world--sunset { filter: saturate(0.7); }
+.sky-auth-world--night { filter: saturate(0.6) brightness(0.75); }
+
+/* Theme tint overlay */
+.sky-auth-tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--sky-bg) 55%, transparent),
+    color-mix(in srgb, var(--sky-bg) 25%, transparent) 50%,
+    color-mix(in srgb, var(--sky-bg) 60%, transparent)
+  );
+  transition: background 1.2s;
+}
+
+/* Glowing orbs */
+.sky-auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  transition: background 1.2s;
+}
+
+.sky-auth-orb--main {
+  width: 600px;
+  height: 600px;
+  right: -120px;
+  top: -80px;
+  background: radial-gradient(circle, var(--sky-orb-main), transparent 70%);
+  opacity: 0.8;
+  animation: sky-orb-drift 18s ease-in-out infinite alternate;
+}
+
+.sky-auth-orb--secondary {
+  width: 400px;
+  height: 400px;
+  left: -80px;
+  bottom: 5%;
+  background: radial-gradient(circle, var(--sky-orb-sec), transparent 70%);
+  opacity: 0.6;
+  animation: sky-orb-drift 24s ease-in-out infinite alternate-reverse;
+}
+
+/* Clouds */
+.sky-auth-cloud {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 35% 55%, var(--sky-cloud-color) 0, transparent 65%),
+    radial-gradient(ellipse at 65% 60%, var(--sky-cloud-color) 0, transparent 65%);
+  filter: blur(20px);
+  transition: opacity 1.2s;
+}
+
+.sky-auth-cloud--one {
+  width: 80%;
+  height: 30%;
+  left: -25%;
+  bottom: -5%;
+  transform: rotate(-8deg);
+  animation: sky-cloud-drift 40s ease-in-out infinite alternate;
+}
+
+.sky-auth-cloud--two {
+  width: 70%;
+  height: 25%;
+  right: -30%;
+  bottom: 8%;
+  animation: sky-cloud-drift 52s ease-in-out infinite alternate-reverse;
+  animation-delay: -15s;
+}
+
+.sky-auth-cloud--three {
+  width: 40%;
+  height: 18%;
+  left: -10%;
+  top: 15%;
+  animation: sky-cloud-drift 65s ease-in-out infinite alternate;
+  animation-delay: -30s;
+}
+
+/* Stars (night only) */
+.sky-auth-stars {
+  position: absolute;
+  inset: 0;
+}
+
+.sky-auth-star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--sky-star-color, white);
+  animation: sky-star-twinkle 3s ease-in-out infinite alternate;
+}
+
+/* Grain overlay */
+.sky-auth-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h200v200H0z'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   4. AUTH HEADER
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(20px, 5vw, 48px);
+  height: 72px;
+  background: color-mix(in srgb, var(--sky-bg) 60%, transparent);
+  border-bottom: 1px solid var(--sky-glass-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition: background 1.2s;
+}
+
+.sky-auth-brand .brand-logo {
+  color: var(--sky-text);
+  transition: color 0.8s;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   5. AUTH MAIN — Card Centering
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-main {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: 100px 20px 40px;
+  width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   6. GLASS CARD
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sg-card {
+  width: min(480px, 100%);
+  background: var(--sky-glass-bg);
+  border: 1px solid var(--sky-glass-border);
+  border-radius: 24px;
+  padding: clamp(28px, 6vw, 44px);
+  box-shadow: var(--sky-glass-shadow);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  transition:
+    background 1.2s,
+    border-color 1.2s,
+    box-shadow 1.2s;
+  animation: sky-card-enter 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   7. AUTH CARD TYPOGRAPHY
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-eyebrow {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--sky-eyebrow);
+  margin: 0 0 10px;
+  transition: color 0.8s;
+}
+
+.sky-auth-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 600;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--sky-text);
+  margin: 0 0 8px;
+  transition: color 0.8s;
+}
+
+.sky-auth-subtitle {
+  font-size: 13px;
+  color: var(--sky-text-muted);
+  line-height: 1.65;
+  margin: 0 0 24px;
+  transition: color 0.8s;
+}
+
+.sky-auth-body {
+  margin-top: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   8. FORM ELEMENTS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.sky-auth-service-notice {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--sky-glass-border);
+  border-radius: 12px;
+  background: var(--sky-glass-bg);
+  color: var(--sky-text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sky-auth-disabled-fieldset {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: .7;
+}
+
+.sky-auth-field {
+  display: grid;
+  gap: 7px;
+}
+
+.sky-auth-field--centered {
+  justify-items: center;
+}
+
+.sky-auth-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--sky-text);
+  transition: color 0.8s;
+}
+
+.sky-auth-label--center {
+  text-align: center;
+}
+
+.sky-auth-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+/* Glass Input */
+.sg-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sg-input-wrap--icon .sg-input {
+  padding-left: 42px;
+}
+
+.sg-input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--sky-input-placeholder);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: color 0.4s;
+  z-index: 1;
+}
+
+.sg-input {
+  width: 100%;
+  min-height: 48px;
+  background: var(--sky-input-bg);
+  border: 1px solid var(--sky-input-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: var(--sky-input-text);
+  font-size: 14px;
+  font-family: inherit;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.sg-input::placeholder {
+  color: var(--sky-input-placeholder);
+}
+
+.sg-input:focus {
+  border-color: var(--sky-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sky-focus) 30%, transparent);
+  background: color-mix(in srgb, var(--sky-input-bg) 80%, rgba(255,255,255,0.12));
+}
+
+.sg-input--invalid {
+  border-color: var(--sky-error) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sky-error) 20%, transparent) !important;
+}
+
+/* Password input */
+.sg-input-wrap--password {
+  position: relative;
+}
+
+.sg-input-wrap--password .sg-input {
+  padding-right: 52px;
+}
+
+.sg-pw-toggle {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--sky-input-placeholder);
+  transition: color 0.2s, background 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sg-pw-toggle:hover {
+  color: var(--sky-text);
+  background: rgba(255,255,255,0.08);
+}
+
+/* Password strength */
+.sg-pw-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.sg-pw-bars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.sg-pw-bar {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: var(--sky-input-border);
+  transition: background 0.4s;
+}
+
+.sg-pw-label {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.4s;
+}
+
+/* OTP Input */
+.sg-otp {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.sg-otp-digit {
+  width: 52px;
+  height: 60px;
+  background: var(--sky-input-bg);
+  border: 1px solid var(--sky-input-border);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sky-text);
+  font-family: "Space Grotesk", monospace;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sg-otp-digit:focus {
+  border-color: var(--sky-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sky-focus) 30%, transparent);
+}
+
+.sg-otp-digit--invalid {
+  border-color: var(--sky-error) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   9. GLASS BUTTON
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition:
+    transform 0.22s,
+    box-shadow 0.22s,
+    background 0.3s,
+    opacity 0.2s;
+  outline: none;
+  white-space: nowrap;
+}
+
+.sg-btn--full {
+  width: 100%;
+}
+
+.sg-btn--primary {
+  background: var(--sky-btn-bg);
+  color: var(--sky-btn-text);
+  box-shadow: var(--sky-btn-shadow);
+}
+
+.sg-btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--sky-btn-shadow),
+    0 2px 12px rgba(0,0,0,0.10);
+}
+
+.sg-btn--ghost {
+  background: var(--sky-glass-bg);
+  color: var(--sky-text);
+  border: 1px solid var(--sky-glass-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sg-btn--ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sky-glass-bg) 120%, rgba(255,255,255,0.10));
+  transform: translateY(-1px);
+}
+
+.sg-btn--danger {
+  background: color-mix(in srgb, var(--sky-error) 85%, transparent);
+  color: #fff;
+  border: 1px solid var(--sky-error);
+}
+
+.sg-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none !important;
+}
+
+.sg-btn:focus-visible {
+  outline: 3px solid var(--sky-focus);
+  outline-offset: 3px;
+}
+
+.sg-btn-spinner {
+  animation: sky-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   10. FORM ERROR, HINTS, LINKS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sg-form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--sky-error) 15%, rgba(0,0,0,0.05));
+  border: 1px solid color-mix(in srgb, var(--sky-error) 40%, transparent);
+  color: var(--sky-error);
+  font-size: 13px;
+  margin: 0;
+  animation: sky-shake 0.4s ease both;
+}
+
+.sky-auth-hint {
+  font-size: 11px;
+  color: var(--sky-text-muted);
+  line-height: 1.5;
+}
+
+.sky-auth-hint--error {
+  color: var(--sky-error);
+}
+
+.sky-auth-link {
+  color: var(--sky-link);
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.sky-auth-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.sky-auth-link--small {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sky-auth-link--muted {
+  color: var(--sky-text-muted);
+  font-weight: 400;
+}
+
+.sky-auth-footer-text {
+  text-align: center;
+  color: var(--sky-text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.sky-auth-resend {
+  text-align: center;
+  font-size: 13px;
+  color: var(--sky-text-muted);
+}
+
+.sky-auth-back {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.sky-auth-back-link {
+  font-size: 12px;
+  color: var(--sky-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sky-auth-back-link:hover {
+  color: var(--sky-text);
+}
+
+.sky-auth-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--sky-text-muted);
+  line-height: 1.5;
+  min-height: 20px;
+}
+
+.sky-auth-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--sky-btn-bg);
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.sky-auth-policy-note {
+  font-size: 10px;
+  opacity: 0.65;
+  font-style: italic;
+}
+
+.sky-auth-mt {
+  margin-top: 16px;
+}
+
+/* Backend pending note */
+.sky-auth-backend-note {
+  font-size: 10px;
+  color: var(--sky-text-muted);
+  opacity: 0.65;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--sky-glass-border);
+  line-height: 1.6;
+  margin: 4px 0 0;
+}
+
+.sky-auth-backend-note code {
+  font-size: 9px;
+  background: rgba(255,255,255,0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Divider */
+.sg-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sg-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--sky-glass-border);
+}
+
+.sg-divider-label {
+  font-size: 11px;
+  color: var(--sky-text-muted);
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   11. THEME SWITCHER PILL
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-theme-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--sky-theme-pill-bg);
+  border: 1px solid var(--sky-theme-pill-border);
+  border-radius: 30px;
+  padding: 6px 12px 6px 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.8s;
+}
+
+.sky-theme-pill:hover {
+  background: color-mix(in srgb, var(--sky-theme-pill-bg) 130%, rgba(255,255,255,0.08));
+}
+
+.sky-theme-pill__symbol {
+  font-size: 16px;
+  line-height: 1;
+  user-select: none;
+}
+
+.sky-theme-pill__select {
+  font-size: 11px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--sky-text);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 32px;
+}
+
+.sky-theme-pill__select option {
+  background: var(--sky-bg);
+  color: var(--sky-text);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   12. SUCCESS / ERROR STATES
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sg-success,
+.sg-error-state {
+  text-align: center;
+  display: grid;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+/* Animated check icon */
+.sg-success-icon svg {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 4px;
+  display: block;
+}
+
+.sg-check-circle {
+  stroke: var(--sky-success);
+  stroke-width: 2;
+  fill: color-mix(in srgb, var(--sky-success) 15%, transparent);
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: sky-check-circle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.sg-check-path {
+  stroke: var(--sky-success);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: sky-check-path 0.35s ease forwards 0.55s;
+  fill: none;
+}
+
+.sg-success-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 24px;
+  letter-spacing: -0.8px;
+  color: var(--sky-text);
+  margin: 0;
+}
+
+.sg-success-message,
+.sg-error-message {
+  font-size: 13px;
+  color: var(--sky-text-muted);
+  line-height: 1.65;
+  max-width: 38ch;
+  margin: 0 auto;
+}
+
+.sg-error-icon {
+  font-size: 44px;
+  opacity: 0.85;
+}
+
+.sg-error-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  color: var(--sky-text);
+  margin: 0;
+}
+
+/* Loading spinner */
+.sg-spinner-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sg-spinner {
+  animation: sky-spin 0.75s linear infinite;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   13. FOCUS STATES (accessible)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.sky-auth-layout button:focus-visible,
+.sky-auth-layout a:focus-visible,
+.sky-auth-layout input:focus-visible,
+.sky-auth-layout select:focus-visible {
+  outline: 3px solid var(--sky-focus);
+  outline-offset: 3px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   14. ANIMATIONS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes sky-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sky-cloud-drift {
+  from { translate: 0 0; }
+  to   { translate: 6% -5%; }
+}
+
+@keyframes sky-orb-drift {
+  from { translate: 0 0; }
+  to   { translate: 4% 8%; }
+}
+
+@keyframes sky-star-twinkle {
+  from { opacity: 0.3; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.4); }
+}
+
+@keyframes sky-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sky-shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}
+
+@keyframes sky-check-circle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes sky-check-path {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   15. RESPONSIVE
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 520px) {
+  .sg-card {
+    border-radius: 20px;
+    padding: 24px 20px;
+  }
+
+  .sky-auth-title {
+    font-size: clamp(24px, 7vw, 32px);
+    letter-spacing: -1px;
+  }
+
+  .sky-auth-main {
+    padding: 88px 12px 32px;
+    justify-content: flex-start;
+  }
+
+  .sg-otp-digit {
+    width: 44px;
+    height: 54px;
+    font-size: 20px;
+  }
+
+  .sg-otp {
+    gap: 7px;
+  }
+
+  .sky-auth-orb--main {
+    width: 340px;
+    height: 340px;
+  }
+
+  .sky-auth-orb--secondary {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 380px) {
+  .sg-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .sg-otp-digit {
+    width: 38px;
+    height: 48px;
+    font-size: 18px;
+    border-radius: 9px;
+  }
+
+  .sky-auth-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 360px) {
+  .sg-otp { gap: 5px; }
+  .sg-otp-digit { width: 34px; height: 44px; }
+}
+
+/* Keep UI usable when virtual keyboard is open */
+@media (max-height: 600px) {
+  .sky-auth-main {
+    justify-content: flex-start;
+    padding-top: 80px;
+    padding-bottom: 20px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   16. REDUCED MOTION
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-auth-card,
+  .sg-card,
+  .sky-auth-cloud,
+  .sky-auth-orb--main,
+  .sky-auth-orb--secondary,
+  .sky-auth-star,
+  .sg-btn-spinner,
+  .sg-spinner,
+  .sg-check-circle,
+  .sg-check-path {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .sg-check-circle {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .sg-check-path {
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   17. PRINT
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media print {
+  .sky-auth-bg,
+  .sky-auth-header {
+    display: none;
+  }
+
+  .sky-auth-main {
+    padding: 20px;
+  }
+
+  .sg-card {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+    color: black;
+  }
+}

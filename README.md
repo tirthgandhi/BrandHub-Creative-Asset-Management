@@ -2,9 +2,11 @@
 
 <!-- Landing-page implementation status; the full-stack specification below remains a roadmap. -->
 
-> **Phase 1–2 implementation:** The React + Vite client and Express + MongoDB API now include the landing page, responsive application shell, Light/Dark/System themes, Client registration, Mongo-backed sessions, login/logout, forced Designer password changes, protected routes, profiles, and Admin user management. Project, asset, collaboration, and final dashboard features remain assigned to Phases 3–7.
+> **Current implementation:** The React + Vite client and Express + MongoDB API include the landing page, responsive application shell, four shared atmospheres (Morning, Afternoon, Sunset, Night) with Auto mode, Client registration, Mongo-backed sessions, login/logout, forced Designer password changes, protected routes, profiles, and Admin user management. Project, asset, collaboration, and final dashboard features remain assigned to Phases 3–7.
 
 > [Phase 1–2 handoff](docs/PHASE1_PHASE2_HANDOFF.md) · [Test report and browser evidence](docs/testing/PHASE1_PHASE2_TEST_REPORT.md)
+
+> [Atmosphere UI handoff](docs/ui/ATMOSPHERE_UI.md) explains the shared theme system and the recovery features that still require server-side email delivery.
 
 # 🎨 BrandHub
 
