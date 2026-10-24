@@ -5,6 +5,7 @@ import { userRouter } from "./userRoutes.js";
 import { projectRouter } from "./projectRoutes.js";
 import { projectRequestRouter } from "./projectRequestRoutes.js";
 import { assetRouter } from "./assetRoutes.js";
+import { mediaRouter } from "./mediaRoutes.js";
 
 export function createApiRouter(options = {}) {
   const router = Router();
@@ -14,5 +15,6 @@ export function createApiRouter(options = {}) {
   router.use("/projects", projectRouter);
   router.use("/project-requests", projectRequestRouter);
   router.use("/assets", assetRouter);
+  router.use("/media", mediaRouter);
   return router;
 }

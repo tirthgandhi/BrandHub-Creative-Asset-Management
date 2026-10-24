@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useEffect, useState, type ReactNode } from "react";
-import { Bookmark, ClipboardList, Compass, FolderKanban, Home, LogOut, Menu, MessageSquareMore, Palette, Settings, Users, X } from "lucide-react";
+import { Bookmark, ClipboardList, Compass, FolderKanban, Home, Images, LogOut, Menu, MessageSquareMore, Palette, Settings, Users, X } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { BrandLogo } from "../BrandLogo";
 import { ThemeSelector } from "../ui";
@@ -10,6 +10,7 @@ const common = [
   { to: "/app/dashboard", label: "Dashboard", icon: Home },
   { to: "/app/projects", label: "Projects", icon: FolderKanban },
   { to: "/app/assets", label: "Assets", icon: Palette },
+  { to: "/app/media", label: "Media", icon: Images },
   { to: "/app/bookmarks", label: "Bookmarks", icon: Bookmark },
 ];
 export const navigationByRole: Record<AppRole, typeof common> = {

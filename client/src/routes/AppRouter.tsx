@@ -22,6 +22,8 @@ import { RequestsPage, RequestFormPage } from "../pages/requests/RequestsPage";
 import { AssetsPage } from "../pages/assets/AssetsPage";
 import { AssetUploadPage } from "../pages/assets/AssetUploadPage";
 import { AssetDetailPage } from "../pages/assets/AssetDetailPage";
+import { MediaLibraryPage } from "../pages/media/MediaLibraryPage";
+import { MediaUploadPage } from "../pages/media/MediaUploadPage";
 
 const LandingPage = lazy(() => import("../App"));
 
@@ -46,6 +48,8 @@ function AuthenticatedApp() {
     <Route path="assets" element={<AssetsPage />} />
     <Route path="assets/upload" element={<ProtectedRoute roles={["admin", "designer"]}><AssetUploadPage /></ProtectedRoute>} />
     <Route path="assets/:id" element={<AssetDetailPage />} />
+    <Route path="media" element={<MediaLibraryPage />} />
+    <Route path="media/upload" element={<MediaUploadPage />} />
     <Route path="reviews" element={placeholder("Reviews", "Phase 5")} />
     <Route path="bookmarks" element={placeholder("Bookmarks", "Phase 5")} />
     <Route path="*" element={<NotFoundPage />} />

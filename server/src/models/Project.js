@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
   designerIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   sourceRequestId: { type: mongoose.Schema.Types.ObjectId, ref: "ProjectRequest" },
+  demoKey: { type: String, default: null },
   startDate: Date,
   dueDate: Date,
 }, { timestamps: true });
@@ -21,5 +22,6 @@ schema.index({ designerIds: 1, status: 1, createdAt: -1 });
 schema.index({ visibility: 1, status: 1, createdAt: -1 });
 schema.index({ category: 1, createdAt: -1 });
 schema.index({ sourceRequestId: 1 }, { unique: true, partialFilterExpression: { sourceRequestId: { $type: "objectId" } } });
+schema.index({ demoKey: 1 }, { unique: true, partialFilterExpression: { demoKey: { $type: "string" } } });
 
 export const Project = mongoose.models.Project || mongoose.model("Project", schema);

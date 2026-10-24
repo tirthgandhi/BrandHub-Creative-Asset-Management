@@ -9,10 +9,21 @@
     "test": "node --test tests/*.test.js",
     "lint": "eslint .",
     "preview:local": "node scripts/localPreview.js",
-    "seed:admin": "node scripts/seedAdmin.js"
+    "seed:admin": "node scripts/seedAdmin.js",
+    "cloudinary:check": "node scripts/cloudinaryAccountCheck.js",
+    "cloudinary:smoke": "node scripts/cloudinarySmokeUpload.js",
+    "media:dry-run": "node scripts/importBrandHubMedia.js --dry-run",
+    "media:import": "node scripts/importBrandHubMedia.js",
+    "media:posters": "node scripts/downloadDemoPosters.js",
+    "media:optimize": "node scripts/optimizeOversizedVideos.js",
+    "media:prepare-local": "node scripts/prepareLocalDemoMedia.js"
+    ,"seed:brandhub:dry-run": "node scripts/seedBrandHubDemo.js --dry-run",
+    "seed:brandhub": "node scripts/seedBrandHubDemo.js",
+    "verify:brandhub-seed": "node scripts/seedBrandHubDemo.js --verify"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "busboy": "^1.6.0",
     "cloudinary": "^2.8.0",
     "connect-mongo": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -30,6 +41,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.0",
     "eslint": "^9.39.0",
+    "ffmpeg-static": "^5.3.0",
     "globals": "^16.5.0",
     "mongodb-memory-server": "^10.3.0",
     "supertest": "^7.1.0"
