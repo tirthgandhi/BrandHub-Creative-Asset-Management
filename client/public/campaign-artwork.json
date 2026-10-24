@@ -1,0 +1,30 @@
+{
+  "method": "Built-in image_gen tool",
+  "purpose": "Original fictional client campaign concepts for BRANDHUB; no customer endorsement implied.",
+  "assets": [
+    {
+      "name": "beverage",
+      "path": "/images/campaigns/beverage.png",
+      "use_case": "product-mockup",
+      "prompt_summary": "Portrait 4:5. Unbranded cobalt-blue beverage can suspended above rippling blue water with an orange slice, droplets, sunlight and caustics. Realistic aluminium; clean upper quarter for HTML text. No logos or text."
+    },
+    {
+      "name": "skincare",
+      "path": "/images/campaigns/skincare.png",
+      "use_case": "product-mockup",
+      "prompt_summary": "Portrait 4:5. Unbranded peach serum bottle and cream jar on apricot stone plinths with silk ribbon and a small white blossom. Warm studio lighting, long tactile shadows, upper quarter quiet for HTML text. No text or logos."
+    },
+    {
+      "name": "footwear",
+      "path": "/images/campaigns/footwear.png",
+      "use_case": "ads-marketing",
+      "prompt_summary": "Portrait 4:5. Unbranded cream and orange technical sneaker floating over a red studio floor with a reflective curved chrome tube. Premium sports-fashion photography, realistic shadow and materials, quiet upper quarter. No text or recognizable brand symbols."
+    },
+    {
+      "name": "cloud",
+      "path": "/images/campaigns/cloud.png",
+      "use_case": "photorealistic-natural",
+      "prompt_summary": "Single large photorealistic white cumulus cloud isolated on transparent background. Detailed sunlit billows, pale-blue underside shadows, naturally feathered edges, wide formation. No sky, text, or border."
+    }
+  ]
+}

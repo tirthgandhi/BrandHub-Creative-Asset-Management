@@ -1,0 +1,89 @@
+:root,
+[data-theme="afternoon"] {
+  --page: #f5f5ef;
+  --ink: #173d3b;
+  --muted: #5c716b;
+  --line: #d9dfd4;
+  --surface: #e9ede3;
+  --sky: #0757a3;
+  --hero-text: #fff;
+  --hero-muted: #dfedff;
+  --nav-glass: #074678ed;
+  --nav-text: #fff;
+  --accent: #dfff87;
+  --accent-ink: #193c30;
+  --scene-tint: linear-gradient(180deg, #003e79a6, #0757a345 52%, #1e79b65c);
+  --cloud: #fff;
+  --cloud-opacity: 0.45;
+  --orb: #d8efff;
+  --film-bg: #173e3b;
+  --film-text: #f3f6ed;
+  --final-bg: #0757a3;
+  --final-text: #fff;
+}
+[data-theme="morning"] {
+  --page: #f6f8f2;
+  --ink: #142d45;
+  --muted: #49667e;
+  --line: #d4e0df;
+  --surface: #e7eeea;
+  --sky: #c6e6ef;
+  --hero-text: #142d45;
+  --hero-muted: #29475b;
+  --nav-glass: #eaf7fff0;
+  --nav-text: #142d45;
+  --accent: #f8d39a;
+  --accent-ink: #183b48;
+  --scene-tint: linear-gradient(180deg, #d8f0ffb8, #d8f0ff9c 65%, #f5dab48c);
+  --cloud: #fff;
+  --cloud-opacity: 0.55;
+  --orb: #fff2c6;
+  --film-bg: #dcebe8;
+  --film-text: #142d45;
+  --final-bg: #c8e4ec;
+  --final-text: #142d45;
+}
+[data-theme="sunset"] {
+  --page: #fff4ed;
+  --ink: #4e3048;
+  --muted: #795565;
+  --line: #e7cecc;
+  --surface: #f1e1d9;
+  --sky: #9d4c6b;
+  --hero-text: #fff7ee;
+  --hero-muted: #fff0df;
+  --nav-glass: #512a52ed;
+  --nav-text: #fff7ee;
+  --accent: #ffd294;
+  --accent-ink: #502e37;
+  --scene-tint: linear-gradient(180deg, #3920409c, #78406670 54%, #f19b586b);
+  --cloud: #ffd8bf;
+  --cloud-opacity: 0.22;
+  --orb: #ffce96;
+  --film-bg: #4b2f46;
+  --film-text: #fff4ed;
+  --final-bg: #9d4b66;
+  --final-text: #fff7ee;
+}
+[data-theme="night"] {
+  --page: #0d1c32;
+  --ink: #f2f4ff;
+  --muted: #b5c3d6;
+  --line: #30435c;
+  --surface: #182c46;
+  --sky: #060f2b;
+  --hero-text: #f5f7ff;
+  --hero-muted: #cbd6ed;
+  --nav-glass: #0c1d36ed;
+  --nav-text: #f5f7ff;
+  --accent: #c3c5ff;
+  --accent-ink: #142344;
+  --scene-tint: linear-gradient(180deg, #060f2b90, #13264b70 50%, #142c56b0);
+  --cloud: #516b96;
+  --cloud-opacity: 0.18;
+  --orb: #b2c9ff;
+  --film-bg: #142942;
+  --film-text: #f2f4ff;
+  --final-bg: #101f40;
+  --final-text: #f2f4ff;
+}

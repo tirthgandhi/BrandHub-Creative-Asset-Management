@@ -1,0 +1,146 @@
+[
+  {
+    "name": "sculptural-architecture",
+    "path": "/images/gallery/sculptural-architecture.webp",
+    "source": "https://www.pexels.com/photo/1445416/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "color-study",
+    "path": "/images/gallery/color-study.webp",
+    "source": "https://www.pexels.com/photo/1029604/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "desert-light",
+    "path": "/images/gallery/desert-light.webp",
+    "source": "https://www.pexels.com/photo/1526713/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "botanical-study",
+    "path": "/images/gallery/botanical-study.webp",
+    "source": "https://www.pexels.com/photo/1831234/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "modern-facade",
+    "path": "/images/gallery/modern-facade.webp",
+    "source": "https://www.pexels.com/photo/1029236/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "soft-geometry",
+    "path": "/images/gallery/soft-geometry.webp",
+    "source": "https://www.pexels.com/photo/834657/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "open-water",
+    "path": "/images/gallery/open-water.webp",
+    "source": "https://www.pexels.com/photo/102129/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "painted-rhythm",
+    "path": "/images/gallery/painted-rhythm.webp",
+    "source": "https://www.pexels.com/photo/1269968/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "still-life",
+    "path": "/images/gallery/still-life.webp",
+    "source": "https://www.pexels.com/photo/4202325/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "creative-studio",
+    "path": "/images/gallery/creative-studio.webp",
+    "source": "https://www.pexels.com/photo/279648/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "quiet-interior",
+    "path": "/images/gallery/quiet-interior.webp",
+    "source": "https://www.pexels.com/photo/2082087/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "coastal-story",
+    "path": "/images/gallery/coastal-story.webp",
+    "source": "https://www.pexels.com/photo/994605/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "urban-lines",
+    "path": "/images/gallery/urban-lines.webp",
+    "source": "https://www.pexels.com/photo/459301/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "mountain-air",
+    "path": "/images/gallery/mountain-air.webp",
+    "source": "https://www.pexels.com/photo/459799/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "wildflowers",
+    "path": "/images/gallery/wildflowers.webp",
+    "source": "https://www.pexels.com/photo/323705/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "green-horizon",
+    "path": "/images/gallery/green-horizon.webp",
+    "source": "https://www.pexels.com/photo/3225517/",
+    "license": "https://www.pexels.com/license/",
+    "provider": "Pexels"
+  },
+  {
+    "name": "Mountainous area in the Alps",
+    "path": "/videos/morning.mp4",
+    "poster": "/images/themes/morning.webp",
+    "source": "https://mixkit.co/free-stock-video/mountainous-area-in-the-alps-4132/",
+    "license": "https://mixkit.co/license/#videoFree",
+    "provider": "Mixkit"
+  },
+  {
+    "name": "White clouds moving across a clear blue sky quickly",
+    "path": "/videos/afternoon.mp4",
+    "poster": "/images/themes/afternoon.webp",
+    "source": "https://mixkit.co/free-stock-video/white-clouds-moving-across-a-clear-blue-sky-quickly-51105/",
+    "license": "https://mixkit.co/license/#videoFree",
+    "provider": "Mixkit"
+  },
+  {
+    "name": "Bright orange sunset on beach",
+    "path": "/videos/sunset.mp4",
+    "poster": "/images/themes/sunset.webp",
+    "source": "https://mixkit.co/free-stock-video/bright-orange-sunset-on-beach-2168/",
+    "license": "https://mixkit.co/license/#videoFree",
+    "provider": "Mixkit"
+  },
+  {
+    "name": "Starry night in the desert",
+    "path": "/videos/night.mp4",
+    "poster": "/images/themes/night.webp",
+    "source": "https://mixkit.co/free-stock-video/starry-night-in-the-desert-46119/",
+    "license": "https://mixkit.co/license/#videoFree",
+    "provider": "Mixkit"
+  }
+]
