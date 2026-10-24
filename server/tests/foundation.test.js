@@ -24,5 +24,5 @@ test("CORS permits the configured client and credentials", async () => {
 });
 
 test("environment validation rejects a missing MongoDB URI", () => {
-  assert.throws(() => readEnv({ NODE_ENV: "test", CLIENT_URL: "http://localhost:5173" }), /MONGODB_URI/);
+  assert.throws(() => readEnv({ NODE_ENV: "test", CLIENT_URL: "http://localhost:5173", SESSION_SECRET: "a-secure-test-secret-with-32-characters" }), /MONGODB_URI/);
 });
