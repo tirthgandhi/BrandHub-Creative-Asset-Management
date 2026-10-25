@@ -15,7 +15,11 @@ export function createVercelApp(initialize = initializeApi) {
       startup ||= initialize().catch(error => { startup = undefined; throw error; });
       const api = await startup;
       return api(req, res, next);
-    } catch {
+    } catch (error) {
+      const configurationError = error.message?.startsWith("Invalid environment configuration:");
+      // Log only the category/code: connection errors can contain private credentials.
+      console.error("BrandHub API initialization failed", { category: configurationError ? "configuration" : "database", code: configurationError ? "INVALID_ENVIRONMENT" : "DATABASE_CONNECTION_FAILED" });
+      if (configurationError) return res.status(503).json({ error: { code: "SERVER_CONFIGURATION_ERROR", message: "The server configuration is incomplete. Contact the site administrator.", details: [] } });
       return res.status(503).json({ error: { code: "SERVICE_UNAVAILABLE", message: "The database is temporarily unavailable. Check the server environment and Atlas network access.", details: [] } });
     }
   });

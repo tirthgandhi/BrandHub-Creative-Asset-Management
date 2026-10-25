@@ -19,3 +19,10 @@ test("failed Vercel initialization returns a safe error and retries on the next 
   assert.equal(failed.body.error.code, "SERVICE_UNAVAILABLE"); assert.ok(!JSON.stringify(failed.body).includes("private-database-credentials"));
   await request(app).get("/api/health").expect(200); assert.equal(starts, 2);
 });
+
+test("invalid environment is reported separately without exposing configuration values", async () => {
+  const app = createVercelApp(async () => { throw new Error("Invalid environment configuration: SESSION_SECRET"); });
+  const reply = await request(app).get("/api/health").expect(503);
+  assert.equal(reply.body.error.code, "SERVER_CONFIGURATION_ERROR");
+  assert.ok(!JSON.stringify(reply.body).includes("SESSION_SECRET"));
+});

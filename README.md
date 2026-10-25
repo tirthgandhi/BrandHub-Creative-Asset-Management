@@ -1,26 +1,46 @@
 <div align="center">
 
-# BrandHub
+# 🎨 BrandHub — Creative Asset Management
 
 **Creative Asset Management & Collaboration**
 
 A shared workspace for creative briefs, project delivery, asset reviews, and client approvals.
 
-React 19 · TypeScript · Vite · Express 5 · MongoDB
+<br/>
+
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+
+<br/>
+
+**[🌐 Open BrandHub](https://brandhub-creative-asset-management.vercel.app/)** · **[🔐 Sign in](https://brandhub-creative-asset-management.vercel.app/login)**
+
 
 [Getting started](#getting-started) · [Screenshots](#screenshots) · [Login accounts](#login-accounts) · [Configuration](#configuration) · [Deployment](#deployment)
 
 </div>
 
-![BrandHub landing page with campaign artwork and creative workspace introduction](docs/screenshots/readme/landing.png)
+---
 
-## Overview
+<a id="overview"></a>
+
+## 🎯 Overview
 
 BrandHub is a full-stack internship prototype that brings Super Admins, Project Managers, Designers, and Clients into one creative workflow. Clients submit briefs, management assigns work, designers upload deliverables, and clients review revisions in the context of their own projects.
 
+**Website:** [brandhub-creative-asset-management.vercel.app](https://brandhub-creative-asset-management.vercel.app/)
+
 The application includes a public landing page, authenticated role-based workspaces, a media library, dashboard analytics, and downloadable management reports. Payments are explicitly simulated; no real funds move or payment credentials are collected. Deployment and email delivery require separate verification in the target environment.
 
-## Contents
+---
+
+<a id="contents"></a>
+
+## 📌 Contents
 
 - [Features](#features)
 - [Screenshots](#screenshots)
@@ -40,7 +60,11 @@ The application includes a public landing page, authenticated role-based workspa
 - [Documentation and contribution](#documentation-and-contribution)
 - [Project status and license](#project-status-and-license)
 
-## Features
+---
+
+<a id="features"></a>
+
+## ✨ Features
 
 | Area | Capabilities |
 | --- | --- |
@@ -57,29 +81,27 @@ The application includes a public landing page, authenticated role-based workspa
 | Payment simulation | Demo UPI/card/bank checkout, simulated declines, and persisted receipts after approval. |
 | Appearance | Morning, afternoon, sunset, and night atmosphere themes with desktop and mobile navigation. |
 
-## Screenshots
+---
 
-The landing and login images show the updated local interface. Dashboard, analytics, and mobile images are existing role-audit captures; their data and navigation reflect the time they were captured.
+<a id="screenshots"></a>
 
-### Sign in
+## 📸 Screenshots
 
-Choose a role and enter credentials manually. The login page has no demo autofill button or displayed password.
+### Landing page
 
-![BrandHub role-based login without demo autofill controls](docs/screenshots/readme/login.png)
+![BrandHub landing page](docs/screenshots/readme/landing.png)
 
-### Workspace dashboard
+### Login page
 
-![Super Admin dashboard with workspace totals and design pipeline](docs/screenshots/readme/dashboard.png)
+Select Client, Designer, Project Manager, or Super Admin and enter your credentials manually. Demo autofill controls have been removed.
 
-### Design analytics
+![BrandHub login page](docs/screenshots/readme/login.png)
 
-![Designer analytics showing pipeline stages and approval progress](docs/screenshots/readme/analytics.png)
+---
 
-### Mobile workspace
+<a id="roles-and-permissions"></a>
 
-<img src="docs/screenshots/readme/mobile.png" alt="Client workspace on a mobile screen" width="320" />
-
-## Roles and permissions
+## 👥 Roles and permissions
 
 | Role | Stored value | Main responsibilities |
 | --- | --- | --- |
@@ -90,7 +112,11 @@ Choose a role and enter credentials manually. The login page has no demo autofil
 
 The former Admin role is represented by `project_manager`. Choosing a role on the login form does not grant access: the API checks the stored account role and project membership. Super Admin inherits management permissions. Clients and Designers receive scoped project data.
 
-## Technology and architecture
+---
+
+<a id="technology-and-architecture"></a>
+
+## 🏗️ Technology and architecture
 
 | Layer | Implementation |
 | --- | --- |
@@ -114,7 +140,11 @@ Express API
 client/public/demo-media/ --> supplied static images and videos
 ```
 
-## Getting started
+---
+
+<a id="getting-started"></a>
+
+## 🚦 Getting started
 
 ### Prerequisites
 
@@ -186,7 +216,11 @@ npm run dev:preview-api
 
 Run this **instead of** the normal API on port 5000, alongside `npm run dev:client`. It starts an isolated temporary MongoDB instance and a Project Manager account: `admin@brandhub.demo` / `AdminPass123`. The first run may download a MongoDB binary. Preview data is disposable and does not include the full four-role catalog.
 
-## Configuration
+---
+
+<a id="configuration"></a>
+
+## ⚙️ Configuration
 
 [Root environment example](.env.example) explains client overrides and provides a server configuration reference. [Server environment example](server/.env.example) is the template to copy for actual API startup.
 
@@ -215,7 +249,11 @@ Run this **instead of** the normal API on port 5000, alongside `npm run dev:clie
 
 Client overrides belong in **`client/.env.local`**. A same-origin setup needs no client environment file. Never put MongoDB, session, or Cloudinary secrets in `VITE_` variables: those values are public browser configuration.
 
-## Login accounts
+---
+
+<a id="login-accounts"></a>
+
+## 🔐 Login accounts
 
 The following fictional accounts belong to the prepared prototype dataset. Select the matching role and enter the email/password manually. A new database does not contain these accounts until seeded.
 
@@ -247,7 +285,11 @@ node scripts/prototypeWorkflow.js
 
 The role script migrates legacy Admin roles, invalidates affected sessions, and ensures the single Super Admin. The workflow script resets catalog account passwords to `Brand123` and prepares a request/review example. These commands change the demo database; run them only against your own dedicated demonstration dataset. They are not part of normal application startup.
 
-## Creative workflow
+---
+
+<a id="creative-workflow"></a>
+
+## 🔄 Creative workflow
 
 1. **Client submits a brief:** include the project description, contact details, company, and proposed INR amount.
 2. **Management reviews the request:** approve the brief and assign designers to the resulting project.
@@ -259,7 +301,11 @@ The role script migrates legacy Admin roles, invalidates affected sessions, and 
 
 Supplied demo photos/videos live in `client/public/demo-media/`. New uploads use GridFS when configured; existing Cloudinary-backed records remain supported. Designer deliverables also support document formats including PDF, DOCX, XLSX, PPTX, TXT, CSV, and ZIP, subject to endpoint validation and hosting limits.
 
-## Application routes
+---
+
+<a id="application-routes"></a>
+
+## 🧭 Application routes
 
 | Route | Purpose |
 | --- | --- |
@@ -281,7 +327,11 @@ Supplied demo photos/videos live in `client/public/demo-media/`. New uploads use
 
 Legacy `/app/admin/users` and `/app/admin/requests` redirect to management routes. Access remains subject to authentication, role, and project membership.
 
-## API overview
+---
+
+<a id="api-overview"></a>
+
+## 🔌 API overview
 
 All API routes use the `/api` prefix. Protected requests require a session cookie; authenticated mutations also use the CSRF token supplied by the authentication flow.
 
@@ -301,7 +351,11 @@ All API routes use the `/api` prefix. Protected requests require a session cooki
 
 See the [API contract](docs/api/API_CONTRACT.md) for the original endpoint conventions and the [route implementations](server/src/routes/) for current behavior. Historical contracts may predate later prototype additions.
 
-## Project structure
+---
+
+<a id="project-structure"></a>
+
+## 📂 Project structure
 
 ```text
 BrandHub-Creative-Asset-Management/
@@ -327,14 +381,18 @@ BrandHub-Creative-Asset-Management/
 |   |   `-- validation/   # Request schemas
 |   |-- tests/            # API, authorization, and workflow tests
 |   `-- server.js         # Persistent server startup
-|-- api/index.mjs         # Vercel Express entry point
+|-- server/index.js      # Vercel Express entry point
 |-- docs/                 # Contracts, screenshots, design and QA records
 |-- .env.example          # Environment reference
 |-- package.json          # Workspace commands
 `-- vercel.json           # Root build and routing configuration
 ```
 
-## Development commands
+---
+
+<a id="development-commands"></a>
+
+## 💻 Development commands
 
 | Command | Purpose |
 | --- | --- |
@@ -353,7 +411,11 @@ BrandHub-Creative-Asset-Management/
 
 Additional media preparation and catalog seed commands are defined in [server/package.json](server/package.json).
 
-## Testing and verification
+---
+
+<a id="testing-and-verification"></a>
+
+## 🧪 Testing and verification
 
 Run the standard checks before submitting code:
 
@@ -379,24 +441,48 @@ node client/tests/browser/analytics-audit.mjs
 
 Interaction and payment audits are also available. Payment tests create demonstration requests and receipts, so use a dedicated test dataset. Historical [test reports](docs/testing/) record earlier verification; they are not proof that a new deployment has passed.
 
-## Deployment
+---
+
+<a id="deployment"></a>
+
+## 🚀 Deployment
 
 ### Vercel: same-origin frontend and API
 
-1. Import this repository with the **repository root** as Root Directory and framework preset **Other**.
-2. Use the root `vercel.json`: it builds `client/dist`, serves public media, and forwards `/api/*` to `api/index.mjs`.
-3. Configure server environment variables in Vercel: `MONGODB_URI`, `SESSION_SECRET`, `CLIENT_URL`, `ASSET_STORAGE=gridfs`, `COOKIE_SECURE=true`, and `COOKIE_SAME_SITE=lax`. Use your deployed HTTPS origin for `CLIENT_URL`.
-4. Leave `VITE_API_URL` unset for same-origin requests. Permit the deployment's database connections in Atlas Network Access.
-5. Keep uploaded files below 4 MB for this prototype's Vercel request envelope. Application-level limits do not override hosting limits. Supplied videos are static assets.
-6. Verify the deployed health endpoint, login/logout, cookie persistence, CSRF rejection, nested-route refreshes, authorized uploads, reports, and role isolation.
+**Project URL:** [Open BrandHub](https://brandhub-creative-asset-management.vercel.app/).
+
+1. Import the repository as one Vercel project with the repository root as Root Directory. The root `vercel.json` declares the `client` Vite service and `server` Express service.
+2. The client builds to `client/dist`; `server/index.js` initializes the API. Public `/api/*` requests reach the server with their prefix intact. No internal service binding is required.
+3. Set Production environment variables in Vercel: `MONGODB_URI`, `SESSION_SECRET` (at least 32 characters), `NODE_ENV=production`, `ASSET_STORAGE=gridfs`, `COOKIE_SECURE=true`, and `COOKIE_SAME_SITE=lax`.
+4. Set `CLIENT_URL=https://brandhub-creative-asset-management.vercel.app`. Keep `VITE_API_URL=/api` or leave it unset. Do not expose server secrets in browser variables.
+5. Set image, video, and document upload limits below the host request limit; keep multipart uploads below 4 MB. Static supplied media is served by the client.
+6. Allow the deployment to connect in Atlas Network Access, confirm database-user permissions, and redeploy after changing environment values.
+7. Verify `/api/health`, login/logout, session persistence, uploads, reports, nested-route refresh, and role isolation on the actual deployment.
+
+See [Vercel services guide](docs/deployment/VERCEL_SERVICES.md) and [.env.vercel.example](.env.vercel.example) for configuration details. The former root API wrapper is no longer used.
 
 ### Separate frontend and persistent API
 
 Build the frontend with `npm run build` and run the backend with `npm run start:server` on a Node host. Set `VITE_API_URL` to the public backend URL ending in `/api` before building the frontend. Set `CLIENT_URL` to the exact frontend origin. For genuinely cross-site cookies, use HTTPS, `COOKIE_SECURE=true`, and `COOKIE_SAME_SITE=none`, then verify actual browser behavior.
 
-The earlier [deployment guide](docs/deployment/PHASE2_DEPLOYMENT.md) contains historical phase notes. The root Vercel configuration and this README describe the current combined deployment path. No live deployment is claimed here.
+The earlier [deployment guide](docs/deployment/PHASE2_DEPLOYMENT.md) contains historical phase notes. The root Vercel configuration and services guide describe the current deployment path. The website link is provided above; end-to-end production acceptance remains a separate check.
 
-## Troubleshooting
+---
+
+<a id="troubleshooting"></a>
+
+## 🔧 Troubleshooting
+
+### Signup/login: database temporarily unavailable
+
+This response means API initialization failed; the original handler also used it for missing or invalid configuration. It does not indicate an invalid signup form.
+
+1. In Vercel **Project Settings → Environment Variables**, confirm `MONGODB_URI` is configured for **Production**, points to the intended database, and contains a valid Atlas database username/password. URL-encode special characters in connection-string credentials.
+2. Set `SESSION_SECRET` to a private random value of at least 32 characters. Do not copy the placeholder from an example file.
+3. In Atlas, confirm the cluster is running, the database user has access, and Network Access permits the Vercel deployment's connections.
+4. Set `CLIENT_URL` to the actual HTTPS site origin and use secure cookies. Redeploy after environment changes.
+5. Check Vercel server runtime logs and `/api/health`. Retry signup only after the API is healthy. Never paste the connection string or session secret into a public issue.
+
 
 | Symptom | What to check |
 | --- | --- |
@@ -411,7 +497,11 @@ The earlier [deployment guide](docs/deployment/PHASE2_DEPLOYMENT.md) contains hi
 | MongoDB test/preview download fails | Check network access or configure a locally cached supported MongoDB binary. |
 | Recovery screen does not send email | Email delivery has not been verified; configure and test a delivery integration before relying on recovery in production. |
 
-## Documentation and contribution
+---
+
+<a id="documentation-and-contribution"></a>
+
+## 🤝 Documentation and contribution
 
 - [Contribution rules and review workflow](CONTRIBUTING.md)
 - [API contract](docs/api/API_CONTRACT.md)
@@ -424,14 +514,22 @@ The earlier [deployment guide](docs/deployment/PHASE2_DEPLOYMENT.md) contains hi
 
 Some supporting documents describe earlier implementation phases, including an obsolete scaffold-only local setup guide. Use this README for current startup instructions and consult source files when historical notes differ.
 
-## Project status and license
+---
+
+<a id="project-status-and-license"></a>
+
+## 📜 Project status and license
 
 BrandHub is an internship prototype with role-based collaboration, local demonstration assets, and database-backed workflows. Email delivery, production operations, and live deployment acceptance require further verification. Simulated payments are not a payment gateway integration.
 
 No license file is currently included. Confirm permission with the repository owner before redistribution, and review third-party media provenance before reusing bundled assets.
 
-## Vercel
+---
 
-The repository is configured for one Vercel project with two services: public `client` (Vite) and public `server` (Express at `/api/*`). The browser uses same-origin `/api`; this static frontend has no server-side caller and needs no runtime binding. The confirmed topology uses one public domain with no internal-only service or runtime binding.
+<div align="center">
 
-Use repository root as Root Directory. See [the Vercel services guide](docs/deployment/VERCEL_SERVICES.md) for exact environment variables and checks; `.env.vercel.example` is a copyable placeholder reference. The backend entry is `server/index.js`; the root legacy API wrapper is no longer used.
+**BrandHub · From creative brief to final approval.**
+
+[Visit website](https://brandhub-creative-asset-management.vercel.app/) · [Report an issue](https://github.com/tirthgandhi/BrandHub-Creative-Asset-Management/issues)
+
+</div>
