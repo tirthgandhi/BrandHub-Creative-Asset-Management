@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Empty login shows an actionable error",
+    "Wrong role login returns 403 and stays on login",
+    "Admin user search returns the matching client",
+    "Admin combined search and role filter handles empty results",
+    "Project search and clear filters update the list",
+    "Client media gallery hides the upload action",
+    "Client project API contains only the signed-in client allocation"
+  ],
+  "passed": true
+}

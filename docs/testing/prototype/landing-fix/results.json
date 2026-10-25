@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "25 distinct media sources across hero, vision, showcase and editorial sections",
+    "All three vision photographs loaded and no plain placeholder cards remain",
+    "Mobile layout has no horizontal overflow"
+  ],
+  "passed": true
+}

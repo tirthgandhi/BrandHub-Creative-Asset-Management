@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "role": "project_manager",
+      "chartValuesMatchDatabase": true,
+      "projectFilterLink": true,
+      "mobileOverflow": false,
+      "scopedWorkload": true
+    },
+    {
+      "role": "designer",
+      "chartValuesMatchDatabase": true,
+      "projectFilterLink": true,
+      "mobileOverflow": false,
+      "scopedWorkload": true
+    },
+    {
+      "role": "super_admin",
+      "chartValuesMatchDatabase": true,
+      "projectFilterLink": true,
+      "mobileOverflow": false,
+      "scopedWorkload": true
+    }
+  ]
+}

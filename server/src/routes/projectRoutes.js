@@ -29,13 +29,13 @@ projectRouter.get("/", validate(projectList), asyncHandler(async (req, res) => {
   res.json({ data: projects.map((project) => serializeProject(project, projectAccess(req.user, project), byId.get(project.id)?.total || 0, byId.get(project.id)?.approved || 0)), pagination: { page, limit, total } });
 }));
 
-projectRouter.post("/", requireRole("admin"), requireCsrf, validate(projectCreate), asyncHandler(async (req, res) => {
+projectRouter.post("/", requireRole("project_manager"), requireCsrf, validate(projectCreate), asyncHandler(async (req, res) => {
   const body = req.validated.body;
   await validateAssignments(body.clientId, body.designerIds);
   validateProjectDates(body.startDate, body.dueDate);
   const project = await Project.create({ ...body, createdBy: req.user._id });
   await project.populate([{ path: "clientId", select: "name" }, { path: "designerIds", select: "name" }]);
-  res.status(201).json({ data: { project: serializeProject(project, "admin") } });
+  res.status(201).json({ data: { project: serializeProject(project, "project_manager") } });
 }));
 
 projectRouter.get("/:id", validate(projectId), asyncHandler(async (req, res) => {
@@ -45,7 +45,7 @@ projectRouter.get("/:id", validate(projectId), asyncHandler(async (req, res) => 
   res.json({ data: { project: serializeProject(entry.project, entry.access, assetCount, approvedAssetCount) } });
 }));
 
-projectRouter.patch("/:id", requireRole("admin"), requireCsrf, validate(projectUpdate), asyncHandler(async (req, res) => {
+projectRouter.patch("/:id", requireRole("project_manager"), requireCsrf, validate(projectUpdate), asyncHandler(async (req, res) => {
   const project = await Project.findById(req.validated.params.id);
   if (!project) throw new AppError(404, "NOT_FOUND", "Project not found");
   const body = req.validated.body;
@@ -56,10 +56,10 @@ projectRouter.patch("/:id", requireRole("admin"), requireCsrf, validate(projectU
   Object.assign(project, body);
   await project.save();
   await project.populate([{ path: "clientId", select: "name" }, { path: "designerIds", select: "name" }]);
-  res.json({ data: { project: serializeProject(project, "admin") } });
+  res.json({ data: { project: serializeProject(project, "project_manager") } });
 }));
 
-projectRouter.delete("/:id", requireRole("admin"), requireCsrf, validate(projectDelete), asyncHandler(async (req, res) => {
+projectRouter.delete("/:id", requireRole("project_manager"), requireCsrf, validate(projectDelete), asyncHandler(async (req, res) => {
   const project = await Project.findById(req.validated.params.id);
   if (!project) throw new AppError(404, "NOT_FOUND", "Project not found");
   if (req.validated.query.mode === "delete") {
@@ -68,5 +68,5 @@ projectRouter.delete("/:id", requireRole("admin"), requireCsrf, validate(project
   project.status = "archived";
   await project.save();
   await project.populate([{ path: "clientId", select: "name" }, { path: "designerIds", select: "name" }]);
-  res.json({ data: { project: serializeProject(project, "admin") } });
+  res.json({ data: { project: serializeProject(project, "project_manager") } });
 }));

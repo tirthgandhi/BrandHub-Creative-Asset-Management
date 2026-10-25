@@ -17,19 +17,19 @@ dashboardRouter.get("/stats", asyncHandler(async (req, res) => {
   const user = req.user;
   const projectScope = buildProjectScope(user);
   const assetScope = await buildAssetScope(user);
-  const visibleProjects = await Project.find(projectScope).select("_id").lean();
+  const visibleProjects = await Project.find(projectScope).select("_id status designerIds").lean();
   const projectIds = visibleProjects.map((project) => project._id);
-  const requestScope = user.role === "admin" ? {} : user.role === "client" ? { clientId: user._id } : null;
+  const requestScope = ["project_manager", "super_admin"].includes(user.role) ? {} : user.role === "client" ? { clientId: user._id } : null;
   const [assetStatuses, mediaCount, requests, activeUsers] = await Promise.all([
     Asset.aggregate([{ $match: assetScope }, { $group: { _id: "$status", count: { $sum: 1 } } }]),
     MediaAsset.countDocuments({ projectId: { $in: projectIds } }),
     requestScope ? ProjectRequest.aggregate([{ $match: requestScope }, { $group: { _id: "$status", count: { $sum: 1 } } }]) : Promise.resolve([]),
-    user.role === "admin" ? User.countDocuments({ isActive: true }) : Promise.resolve(undefined),
+    ["project_manager", "super_admin"].includes(user.role) ? User.countDocuments({ isActive: true }) : Promise.resolve(undefined),
   ]);
   const assetCounts = Object.fromEntries(ASSET_STATUSES.map((status) => [status, assetStatuses.find((row) => row._id === status)?.count || 0]));
   const requestCounts = Object.fromEntries(["pending", "processing", "approved", "rejected", "cancelled"].map((status) => [status, requests.find((row) => row._id === status)?.count || 0]));
   let clientsWithoutProject;
-  if (user.role === "admin") {
+  if (["project_manager", "super_admin"].includes(user.role)) {
     const [clientIds, assignedIds] = await Promise.all([User.distinct("_id", { role: "client", isActive: true }), Project.distinct("clientId")]);
     const assigned = new Set(assignedIds.map(String));
     clientsWithoutProject = clientIds.filter((id) => !assigned.has(String(id))).length;
@@ -40,10 +40,18 @@ dashboardRouter.get("/stats", asyncHandler(async (req, res) => {
     id: String(event._id), type: event.action, description: `${event.assetId?.title || "Asset"}: ${event.action.replaceAll("_", " ")}`,
     at: event.createdAt, href: `/app/assets/${event.assetId?._id || event.assetId}`,
   }));
-  res.json({ data: { role: user.role, metrics: {
+  const projectStatuses = Object.fromEntries(["active", "on_hold", "completed", "archived"].map(status => [status, visibleProjects.filter(project => project.status === status).length]));
+  let workload = [];
+  if (["project_manager", "super_admin"].includes(user.role)) {
+    const totals = new Map();
+    for (const project of visibleProjects.filter(project => project.status === "active")) for (const designer of project.designerIds) totals.set(String(designer), (totals.get(String(designer)) || 0) + 1);
+    const designers = await User.find({ _id: { $in: [...totals.keys()] }, role: "designer" }).select("name").lean();
+    workload = designers.map(person => ({ id: String(person._id), name: person.name, projects: totals.get(String(person._id)) })).sort((a, b) => b.projects - a.projects || a.name.localeCompare(b.name));
+  }
+  res.json({ data: { role: user.role, analytics: { projectStatuses, workload }, metrics: {
     projects: visibleProjects.length, media: mediaCount, assets: assetCounts, requests: requestCounts,
     pendingReviews: assetCounts.in_review,
-    ...(user.role === "admin" ? { activeUsers, clientsWithoutProject } : {}),
+    ...(["project_manager", "super_admin"].includes(user.role) ? { activeUsers, clientsWithoutProject } : {}),
     ...(user.role === "designer" ? { requiringAction: assetCounts.draft + assetCounts.changes_requested } : {}),
   }, recentActivity } });
 }));

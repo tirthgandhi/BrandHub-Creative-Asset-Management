@@ -2,18 +2,19 @@ import { Project } from "../models/Project.js";
 
 export function buildProjectScope(user, { publicOnly = false } = {}) {
   const publicScope = { visibility: "public", status: { $ne: "archived" } };
+  if (user.role === "client") return { clientId: user._id };
   if (publicOnly) return publicScope;
-  if (user.role === "admin") return {};
+  if (["project_manager", "super_admin"].includes(user.role)) return {};
   if (user.role === "designer") return { designerIds: user._id };
   return { $or: [{ clientId: user._id }, publicScope] };
 }
 
 export function projectAccess(user, project) {
   if (!project) return "none";
-  if (user.role === "admin") return "admin";
+  if (["project_manager", "super_admin"].includes(user.role)) return "project_manager";
   if (user.role === "designer" && project.designerIds.some((id) => String(id._id || id) === user.id)) return "designer";
   if (user.role === "client" && String(project.clientId?._id || project.clientId) === user.id) return "client";
-  if (project.visibility === "public" && project.status !== "archived") return "public";
+  if (user.role !== "client" && project.visibility === "public" && project.status !== "archived") return "public";
   return "none";
 }
 

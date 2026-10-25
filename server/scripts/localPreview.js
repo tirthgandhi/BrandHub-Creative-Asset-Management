@@ -9,7 +9,7 @@ const port = Number(process.env.PORT || 5000);
 const mongo = await MongoMemoryServer.create({ binary: { version: "7.0.14" } });
 const uri = mongo.getUri();
 await connectDatabase(uri);
-await User.create({ name: "BrandHub Admin", email: "admin@brandhub.demo", role: "admin", passwordHash: await hashPassword("AdminPass123"), mustChangePassword: false });
+await User.create({ name: "BrandHub Admin", email: "admin@brandhub.demo", role: "project_manager", passwordHash: await hashPassword("AdminPass123"), mustChangePassword: false });
 const app = createApp({ clientUrl: process.env.CLIENT_URL || "http://127.0.0.1:5173", sessionSecret: "local-preview-session-secret-change-me-12345", sessionStore: createMongoSessionStore(uri), authRateLimit: 1000 });
 const server = app.listen(port, () => {
   console.log(`BrandHub preview API: http://127.0.0.1:${port}/api`);

@@ -24,6 +24,9 @@ export const projectUpdate = envelope(z.strictObject({ ...Object.fromEntries(Obj
 export const projectList = envelope(z.any(), z.any(), z.strictObject({ ...paging, search: z.string().trim().max(100).optional(), category: category.optional(), status: z.enum(PROJECT_STATUSES).optional(), visibility: z.enum(["private", "public"]).optional(), sort: z.enum(["title", "-title", "createdAt", "-createdAt", "dueDate", "-dueDate"]).default("-createdAt") }));
 export const projectId = envelope(z.any(), idParams);
 export const projectDelete = envelope(z.any(), idParams, z.strictObject({ mode: z.enum(["archive", "delete"]).default("archive") }));
-export const requestCreate = envelope(z.strictObject({ title: projectFields.title, description: projectFields.description, category, desiredDeadline: optionalDate }));
+export const requestCreate = envelope(z.strictObject({ title: projectFields.title, description: projectFields.description, category, desiredDeadline: optionalDate,
+  contactDetails: z.strictObject({ name: z.string().trim().min(2).max(80), email: z.string().trim().toLowerCase().email().max(254), phone: z.string().trim().regex(/^\+?[0-9 ()-]{6,24}$/, "Enter a valid phone number"), company: z.string().trim().max(120).optional() }).optional(),
+  amount: z.number().min(1).max(10000000).refine(value => Math.abs(value * 100 - Math.round(value * 100)) < 0.00001, "Use at most two decimal places").optional(),
+}));
 export const requestList = envelope(z.any(), z.any(), z.strictObject({ ...paging, status: z.enum(["pending", "approved", "rejected", "cancelled"]).optional(), category: category.optional(), sort: z.enum(["createdAt", "-createdAt"]).default("-createdAt") }));
 export const requestDecision = envelope(z.strictObject({ decision: z.enum(["approve", "reject"]), note: z.string().trim().max(2000).optional(), designerIds: projectFields.designerIds.optional(), startDate: optionalDate, dueDate: optionalDate }).superRefine((value, ctx) => { if (value.decision === "reject" && !value.note) ctx.addIssue({ code: "custom", path: ["note"], message: "A rejection note is required" }); }), idParams);

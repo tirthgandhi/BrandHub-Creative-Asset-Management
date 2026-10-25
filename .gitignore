@@ -7,3 +7,10 @@ dist/
 *.tsbuildinfo
 *.log
 .tmp/
+
+# Local submission bundle
+/deliverables/
+
+/output/pdf/*.png
+
+/.tmp-*.mjs

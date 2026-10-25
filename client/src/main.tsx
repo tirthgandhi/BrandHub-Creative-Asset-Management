@@ -9,6 +9,7 @@ import "./styles/global.css";
 import "./styles/campaigns.css";
 import "./styles/application.css";
 import "./styles/atmosphere.css";
+import "./styles/workspace-polish.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

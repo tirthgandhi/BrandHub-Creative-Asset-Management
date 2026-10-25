@@ -1,7 +1,7 @@
 import { api } from "./api";
 
 export type DashboardStats = {
-  role: "admin" | "designer" | "client";
+  role: "super_admin" | "project_manager" | "designer" | "client";
   metrics: {
     projects: number;
     media: number;
@@ -12,6 +12,7 @@ export type DashboardStats = {
     clientsWithoutProject?: number;
     requiringAction?: number;
   };
+  analytics: { projectStatuses: Record<"active" | "on_hold" | "completed" | "archived", number>; workload: Array<{ id: string; name: string; projects: number }> };
   recentActivity: Array<{ id: string; type: string; description: string; at: string; href: string }>;
 };
 

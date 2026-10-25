@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import sharp from "sharp";
+import { finished } from "node:stream/promises";
+import { mediaBucket } from "./gridfsMedia.js";
 import { v2 as cloudinary } from "cloudinary";
 import { AppError } from "../utils/AppError.js";
 import { StorageCleanup } from "../models/StorageCleanup.js";
@@ -8,6 +12,7 @@ function requireStorage() {
 }
 
 export function uploadFile(buffer, { projectId, assetId, format }) {
+  if ((process.env.ASSET_STORAGE === "gridfs" || process.env.ASSET_STORAGE !== "cloudinary" && process.env.NODE_ENV !== "test" && !process.env.NODE_TEST_CONTEXT)) return uploadMongo(buffer, format);
   requireStorage();
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream({ resource_type: "image", type: "authenticated", access_mode: "authenticated", public_id: `brandhub/${projectId}/${assetId}`, overwrite: false, format }, (error, result) => error ? reject(error) : resolve(result));
@@ -16,11 +21,13 @@ export function uploadFile(buffer, { projectId, assetId, format }) {
 }
 
 export async function deleteFile(publicId) {
+  if (publicId.startsWith("gridfs:")) { await mediaBucket().delete(new mongoose.Types.ObjectId(publicId.slice(7))); return { result: "ok" }; }
   requireStorage();
   return cloudinary.uploader.destroy(publicId, { resource_type: "image", type: "authenticated", invalidate: true });
 }
 
 function signedUrl(file, transformation) {
+  if (file.publicId.startsWith("gridfs:")) return { url: `/api/assets/stored/${file.publicId.slice(7)}`, expiresAt: new Date(Date.now() + ttlSeconds * 1000).toISOString() };
   requireStorage();
   const key = process.env.CLOUDINARY_AUTH_TOKEN_KEY;
   if (!key) throw new AppError(503, "SERVICE_UNAVAILABLE", "Protected asset delivery is not configured");
@@ -52,4 +59,12 @@ export function startStorageCleanupWorker() {
   const timer = setInterval(() => retryStorageCleanup().catch(() => console.error("Asset storage cleanup retry failed")), 10 * 60 * 1000);
   timer.unref();
   return () => clearInterval(timer);
+}
+
+async function uploadMongo(buffer, format) {
+  const dimensions = await sharp(buffer).metadata();
+  const stream = mediaBucket().openUploadStream(`design.${format}`, { metadata: { contentType: `image/${format === "jpg" ? "jpeg" : format}` } });
+  stream.end(buffer);
+  await finished(stream);
+  return { public_id: `gridfs:${stream.id}`, version: 1, bytes: buffer.length, width: dimensions.width, height: dimensions.height };
 }

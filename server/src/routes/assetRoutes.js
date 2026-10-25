@@ -1,3 +1,4 @@
+import { mediaBucket } from "../services/gridfsMedia.js";
 import mongoose from "mongoose";
 import { Router } from "express";
 import { Asset } from "../models/Asset.js";
@@ -28,6 +29,17 @@ function serializeAsset(asset, { publicView = false, bookmarked = false } = {}) 
   return { ...base, description: asset.description, tags: asset.tags, uploadedBy: asset.uploadedBy?.name ? { id: String(asset.uploadedBy._id), name: asset.uploadedBy.name } : { id: String(asset.uploadedBy) } };
 }
 
+assetRouter.get("/stored/:fileId", asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.fileId)) throw notFound();
+  const publicId = `gridfs:${req.params.fileId}`;
+  const revision = await AssetRevision.findOne({ "file.publicId": publicId });
+  if (!revision || !await Asset.exists({ _id: revision.assetId, ...await buildAssetScope(req.user) })) throw notFound();
+  const files = await mediaBucket().find({ _id: new mongoose.Types.ObjectId(req.params.fileId) }).toArray();
+  if (!files.length) throw notFound();
+  res.set("Content-Type", files[0].metadata.contentType).set("Cache-Control", "private, no-store");
+  mediaBucket().openDownloadStream(files[0]._id).on("error", () => res.destroy()).pipe(res);
+}));
+
 assetRouter.get("/", validate(assetList), asyncHandler(async (req, res) => {
   const { page, limit, search, projectId, category, status, uploadedBy, sort } = req.validated.query;
   const filter = { $and: [await buildAssetScope(req.user, { projectId })] };
@@ -50,7 +62,7 @@ assetRouter.post("/", requireCsrf, receiveImage, asyncHandler(async (req, res) =
   const body = parsed.data;
   const project = await Project.findById(body.projectId);
   if (!project || !canUploadToProject(req.user, project)) throw notFound();
-  if (!process.env.CLOUDINARY_AUTH_TOKEN_KEY) throw new AppError(503, "SERVICE_UNAVAILABLE", "Protected asset delivery is not configured");
+  if (process.env.ASSET_STORAGE === "cloudinary" && !process.env.CLOUDINARY_AUTH_TOKEN_KEY) throw new AppError(503, "SERVICE_UNAVAILABLE", "Protected asset delivery is not configured");
   if (body.uploadKey) {
     const existing = await Asset.findOne({ uploadedBy: req.user._id, uploadKey: body.uploadKey }).select("+currentFile");
     if (existing) return res.status(201).json({ data: { asset: serializeAsset(existing) } });

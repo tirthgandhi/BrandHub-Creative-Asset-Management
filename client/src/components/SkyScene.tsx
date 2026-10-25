@@ -6,7 +6,7 @@ export function SkyScene({ theme }: { theme: Theme }) {
         <div
           key={t}
           className={`sky-world sky-${t} ${theme === t ? "active" : ""}`}
-          style={{ backgroundImage: `url(/images/themes/${t}.webp)` }}
+          style={theme === t ? { backgroundImage: `url(/images/themes/${t}.webp)` } : undefined}
         />
       ))}
       <div className="sky-tint" />

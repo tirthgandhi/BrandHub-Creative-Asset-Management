@@ -1,9 +1,10 @@
+import { visionGallery, editorialMedia } from "../data/gallery";
 import { ArrowUpRight, ArrowUp, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { themes, themeCopy, type Theme } from "../data/themes";
 import { BrandLogo } from "./BrandLogo";
-import { CampaignArtwork } from "./CampaignArtwork";
-import { gallery } from "../data/gallery";
+
+
 export function CreativeMarquee() {
   const names = [
     "Instagram Posts",
@@ -81,7 +82,7 @@ export function VisionSection() {
         ].map(([title, desc], i) => (
           <article className={`vision-card vision-${i}`} key={title}>
             <div className="vision-art">
-              <div className="vision-deliverable"><CampaignArtwork item={gallery[[0,3,1][i]]} /></div><div className="vision-back-card" aria-hidden="true"/>
+              <div className="vision-deliverable vision-photo"><img src={visionGallery[i].src} alt={visionGallery[i].alt} loading="lazy" /></div><div className="vision-back-card" aria-hidden="true"/>
               <span className="vision-number">0{i + 1}</span>
               <div className="art-label">
                 {i === 0
@@ -160,7 +161,7 @@ export function WorkflowSection() {
               </div>
             </div>
             <div className="workflow-visual">
-              <div className="workflow-art-stack"><CampaignArtwork item={gallery[[4,8,6][i]]}/><CampaignArtwork item={gallery[[7,5,15][i]]}/></div><small>ILLUSTRATIVE CLIENT DELIVERABLES / 0{i + 1}</small>
+              <div className="workflow-demo"><div className="workflow-demo-top"><span>BRANDHUB</span><span>PROJECT / 0{i + 1}</span></div><span className="workflow-demo-label">{["THE CREATIVE BRIEF", "THE CREATIVE PROCESS", "THE FINAL HANDOFF"][i]}</span><h4>{["A clear direction.", "Every version, together.", "Ready for the world."][i]}</h4><p>{["Summer launch campaign", "Campaign design - Version 02", "Approved campaign collection"][i]}</p><div className="workflow-demo-divider" />{["Project brief", "Creative direction", "Client approval"].map((label,index)=><div className="workflow-demo-row" key={label}><span className={index <= i ? "is-done" : ""}>{index <= i ? <Check size={13}/> : index + 1}</span><span>{label}</span><small>{index <= i ? "Complete" : "Up next"}</small></div>)}<div className="workflow-demo-progress"><span style={{width:`${(i+1)/3*100}%`}} /></div></div>
             </div>
           </article>
         ))}
@@ -221,7 +222,7 @@ export function EditorialSection() {
   return (
     <section className="editorial-section" aria-labelledby="editorial-heading">
       <div className="editorial-photo editorial-left">
-        <CampaignArtwork item={gallery[2]}/>
+        <img src={editorialMedia[0].src} alt={editorialMedia[0].alt} loading="lazy" />
         <small>MAKE ROOM FOR DIFFERENT.</small>
       </div>
       <div className="editorial-text">
@@ -239,7 +240,7 @@ export function EditorialSection() {
         </h2>
       </div>
       <div className="editorial-photo editorial-right">
-        <CampaignArtwork item={gallery[1]}/>
+        <img src={editorialMedia[1].src} alt={editorialMedia[1].alt} loading="lazy" />
       </div>
       <span className="editorial-asterisk" aria-hidden="true">
         ✳

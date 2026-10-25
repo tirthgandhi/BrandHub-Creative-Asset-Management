@@ -6,7 +6,7 @@ import type { AppRole } from "../components/layout/AppShell";
 export type AuthUser = { id: string; name: string; email: string; role: AppRole; avatarUrl: string; isActive: boolean; mustChangePassword: boolean; createdAt: string; updatedAt: string };
 type AuthContextValue = {
   user: AuthUser | null; loading: boolean; error: ApiError | null;
-  login: (email: string, password: string) => Promise<AuthUser>;
+  login: (email: string, password: string, role?: AppRole) => Promise<AuthUser>;
   register: (name: string, email: string, password: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<AuthUser>;
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const run = useCallback(async (request: Promise<{ data: { data: { user: AuthUser; csrfToken?: string } } }>) => {
     try { return accept((await request).data.data); } catch (caught) { const normalized = normalizeApiError(caught); setError(normalized); throw normalized; }
   }, []);
-  const login = useCallback((email: string, password: string) => run(api.post("/auth/login", { email, password })), [run]);
+  const login = useCallback((email: string, password: string, role?: AppRole) => run(api.post("/auth/login", { email, password, role })), [run]);
   const register = useCallback((name: string, email: string, password: string) => run(api.post("/auth/register", { name, email, password })), [run]);
   const changePassword = useCallback((currentPassword: string, newPassword: string) => run(api.patch("/auth/change-password", { currentPassword, newPassword })), [run]);
   const logout = useCallback(async () => { try { await api.post("/auth/logout"); } finally { setUser(null); setCsrfToken(null); } }, []);

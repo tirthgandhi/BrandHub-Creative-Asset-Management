@@ -22,3 +22,25 @@
 @media(max-width:767px){.hero-dimensional{height:auto;min-height:1000px;padding-top:125px;align-items:flex-start}.hero-dimensional h1{font-size:clamp(46px,9vw,70px)}.hero-dimensional .hero-content{padding:0 20px;max-width:100%}.hero-dimensional .hero-orbit{inset:520px 0 85px;perspective:1000px}.orbit-post{width:39%;max-width:185px;left:9%;top:8%;transform:rotateY(14deg) rotateZ(-10deg)}.orbit-reel{width:30%;max-width:145px;right:10%;top:6%;transform:rotateY(-15deg) rotateZ(10deg)}.orbit-ad,.orbit-kit{display:none}.orbit-chip{font-size:7px;padding:7px 10px;gap:5px}.chip-post{left:7%;top:-4%;rotate:-3deg}.chip-reel{right:6%;top:-3%}.chip-kit{bottom:0;left:50%;font-size:7px;white-space:nowrap}.orbit-ring{height:80%;top:5%;width:110%;left:-5%}.floating-file-label{left:10px;font-size:5px;padding:6px 8px;gap:4px;bottom:-15px}.floating-file-label svg{width:9px}.volume-left{width:450px;left:-330px;top:27%;opacity:.7}.volume-right{width:450px;right:-280px;bottom:-4%;opacity:.8}.volume-far{width:250px;right:-160px;top:8%}.sky-journey:after{width:400px;right:-300px;top:1450px}.sky-journey .vision-grid{margin-top:35px;gap:40px}.sky-journey .vision-art{height:440px;max-width:420px;margin:auto}.vision-deliverable{width:64%;left:18%;top:25px}.vision-2 .vision-deliverable{width:48%;left:26%}.sky-journey .vision-1{padding:0}.sky-journey .art-label{font-size:13px;bottom:20px;left:20px;right:20px}.sky-journey .collection-tags{right:4px}.sky-journey .vision-copy{padding-top:20px}.campaign-brand{font-size:5cqw}.campaign-headline{font-size:10cqw}.campaign-footwear .campaign-headline{font-size:10cqw}.campaign-subline{font-size:2cqw}.campaign-edition{font-size:1.6cqw}.asset-format{font-size:2.1cqw;padding:7px 6px}.asset-format svg{width:9px}.reel-stamp{padding:4px 5px;font-size:1.8cqw}.reel-stamp svg{width:9px}.gallery-section{padding-top:65px}.gallery-count{margin-top:8px}.gallery-caption h3{font-size:9px}.gallery-card:hover{transform:none;filter:none}.workflow-visual{height:370px}.editorial-photo{width:135px;height:auto}.editorial-right{width:115px;top:62%}.editorial-left{top:65%}.campaign-detail .campaign-headline{font-size:10cqw}}
 @media(max-width:380px){.hero-dimensional{min-height:930px;padding-top:120px}.hero-dimensional .hero-orbit{top:490px;bottom:95px}.hero-dimensional h1{font-size:46px}.sky-journey .vision-art{height:365px}.sky-journey .art-label{font-size:11px;left:12px;right:12px}.workflow-visual{height:320px}.social-header{font-size:6px;padding:7px;gap:4px}.social-header small{font-size:4px}.social-avatar{width:17px;height:17px}.social-footer{padding:7px;gap:7px}.social-footer svg{width:10px}.filter-row button{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.orbit-card{will-change:auto}.volume-cloud{animation:none}.vision-card:hover .vision-deliverable{transform:none}.gallery-card:hover{transform:none}.hero-orbit{--pointer-x:0px;--pointer-y:0px;--rotate-x:0deg;--rotate-y:0deg}}
+/* Complete photographic vision cards with unique reserved supplied media. */
+.sky-journey .vision-deliverable.vision-photo { inset:24px 24px 74px; width:auto; height:auto; transform:none; border-radius:15px; overflow:hidden; background:#edf2f5; border:1px solid #ffffff88; box-shadow:0 16px 36px #002b4d33; z-index:2; }
+.vision-photo img { display:block; width:100%; height:100%; object-fit:cover; }
+.sky-journey .vision-back-card { display:none; }
+.sky-journey .vision-card .collection-tags { display:none; }
+.sky-journey .vision-card .vision-number { z-index:4; top:36px; left:36px; background:#15384bd9; color:white; padding:7px 9px; border-radius:7px; }
+.workflow-visual .workflow-demo { width:min(340px,calc(100% - 36px)); margin:auto; padding:26px; border:1px solid #c7d9df; border-radius:18px; background:#f9fcfd; color:#183c49; box-shadow:0 20px 40px #1539461c; text-align:left; }
+.workflow-demo-top { display:flex; justify-content:space-between; gap:12px; margin-bottom:28px; font-size:9px; font-weight:750; letter-spacing:.08em; }
+.workflow-demo-label { font-size:9px; letter-spacing:.12em; color:#58717b; }
+.workflow-demo h4 { font-size:23px; letter-spacing:-.04em; margin:10px 0; }
+.workflow-demo p { font-size:12px; color:#58717b; }
+.workflow-demo-divider { height:1px; background:#dce6ea; margin:20px 0; }
+.workflow-demo-row { display:flex; align-items:center; gap:10px; margin:12px 0; font-size:11px; }
+.workflow-demo-row > span:first-child { display:grid; place-items:center; width:22px; height:22px; border:1px solid #cbdde2; border-radius:50%; font-size:9px; color:#67848d; }
+.workflow-demo-row > span.is-done { background:#d9eee6; border-color:#b0d8ca; color:#236352; }
+.workflow-demo-row small { margin-left:auto; color:#58717b; font-size:9px; }
+.workflow-demo-progress { height:5px; background:#e1eaed; margin-top:22px; border-radius:8px; overflow:hidden; }
+.workflow-demo-progress span { display:block; height:100%; background:#367b69; }
+.editorial-photo > img { width:100%; height:100%; object-fit:cover; }
+@media(max-width:600px) { .sky-journey .vision-deliverable.vision-photo { inset:18px 18px 70px; } }
+
+.workflow-visual { min-height:410px; }

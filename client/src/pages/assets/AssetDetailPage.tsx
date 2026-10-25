@@ -12,8 +12,8 @@ export function AssetDetailPage() {
   useEffect(() => { let live = true; setLoading(true); getAsset(id).then((result) => { if (!live) return; setAsset(result); setTitle(result.title); setDescription(result.description || ""); setCategory(result.category); setTags(result.tags?.join(", ") || ""); }).catch((caught) => { if (live) setError(normalizeApiError(caught).message); }).finally(() => { if (live) setLoading(false); }); return () => { live = false; }; }, [id]);
   if (loading) return <Skeleton label="Loading asset" />;
   if (!asset) return <EmptyState title="Asset unavailable" message={error || "This asset may be private or no longer exist."} action={<Link className="ui-button ui-button--ghost" to="/app/assets">Back to assets</Link>} />;
-  const canEdit = asset.uploadedBy && (user?.role === "admin" || user?.role === "designer" && asset.uploadedBy.id === user.id) && asset.status !== "approved";
-  const canDelete = canEdit && (user?.role === "admin" || asset.status === "draft");
+  const canEdit = asset.uploadedBy && (["project_manager", "super_admin"].includes(user?.role || "") || user?.role === "designer" && asset.uploadedBy.id === user.id) && asset.status !== "approved";
+  const canDelete = canEdit && (["project_manager", "super_admin"].includes(user?.role || "") || asset.status === "draft");
   const refresh = async () => { const updated = await getAsset(id); setAsset(updated); setRevision((value) => value + 1); };
   const openFile = async () => { setError(""); try { const file = await getAssetFile(id); window.open(file.url, "_blank", "noopener,noreferrer"); } catch (caught) { setError(normalizeApiError(caught).message); } };
   const save = async (event: FormEvent) => { event.preventDefault(); setBusy(true); setError(""); try { const updated = await updateAsset(id, { title, description, category, tags: tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean), expectedVersion: asset.currentVersion }); setAsset(updated); setEditing(false); } catch (caught) { setError(normalizeApiError(caught).message); } finally { setBusy(false); } };

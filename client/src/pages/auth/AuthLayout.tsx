@@ -1,3 +1,4 @@
+import { BrandWatermark } from "../../components/branding/BrandWatermark";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { BrandLogo } from "../../components/BrandLogo";
@@ -27,6 +28,7 @@ export function AuthLayout({
     <div className="sky-auth-layout">
       {/* Full-screen animated sky */}
       <AtmosphereBackground />
+      <BrandWatermark />
 
       {/* Fixed top bar */}
       <header className="sky-auth-header">

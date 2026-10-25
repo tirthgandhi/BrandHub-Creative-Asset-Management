@@ -142,7 +142,7 @@ commentRouter.delete("/:id",
 
     // Check authorization
     const isOwner = String(comment.userId) === req.user.id;
-    const isAdmin = req.user.role === "admin";
+    const isAdmin = ["project_manager", "super_admin"].includes(req.user.role);
 
     if (!isOwner && !isAdmin) {
       throw notFound();

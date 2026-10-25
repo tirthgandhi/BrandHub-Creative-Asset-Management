@@ -35,9 +35,10 @@ export function createAuthRouter({ limit = 20 } = {}) {
     res.status(201).json({ data: { user: authUser.toJSON(), csrfToken } });
   }));
   router.post("/login", limiter(), validate(loginSchema), asyncHandler(async (req, res) => {
-    const { email, password } = req.validated.body;
+    const { email, password, role } = req.validated.body;
     const user = await User.findOne({ email }).select("+passwordHash +authVersion");
     if (!user || !user.isActive || !(await verifyPassword(password, user.passwordHash))) throw new AppError(401, "UNAUTHENTICATED", "Invalid email or password");
+    if (role && user.role !== role) throw new AppError(403, "ROLE_MISMATCH", "This account does not belong to the selected role. Choose the correct sign-in option.");
     const csrfToken = await establishSession(req, user);
     res.json({ data: { user: user.toJSON(), csrfToken } });
   }));

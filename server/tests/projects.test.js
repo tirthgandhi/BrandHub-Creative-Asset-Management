@@ -18,7 +18,7 @@ beforeEach(async () => {
   await Promise.all([User.deleteMany({}), Project.deleteMany({}), ProjectRequest.deleteMany({}), Asset.deleteMany({})]);
   const passwordHash = await hashPassword("Password123");
   [admin, clientA, clientB, designer] = await User.create([
-    { name: "Admin", email: "admin@example.test", passwordHash, role: "admin" },
+    { name: "Project Manager", email: "admin@example.test", passwordHash, role: "project_manager" },
     { name: "Client A", email: "a@example.test", passwordHash, role: "client" },
     { name: "Client B", email: "b@example.test", passwordHash, role: "client" },
     { name: "Designer", email: "designer@example.test", passwordHash, role: "designer" },
@@ -28,7 +28,7 @@ beforeEach(async () => {
 async function actor(email) { const agent = request.agent(app); const auth = await agent.post("/api/auth/login").send({ email, password: "Password123" }).expect(200); return { agent, csrf: auth.body.data.csrfToken }; }
 const projectBody = (clientId, designerId) => ({ title: "Launch campaign", description: "A complete social launch campaign", category: "Social Media", clientId, designerIds: [designerId] });
 
-test("Admin project create enforces assignment and private access", async () => {
+test("Project Manager project create enforces assignment and private access", async () => {
   const owner = await actor(admin.email); const outsider = await actor(clientB.email); const member = await actor(clientA.email);
   await owner.agent.post("/api/projects").set("X-CSRF-Token", owner.csrf).send(projectBody(designer.id, clientA.id)).expect(422);
   const created = await owner.agent.post("/api/projects").set("X-CSRF-Token", owner.csrf).send(projectBody(clientA.id, designer.id)).expect(201);
@@ -37,9 +37,7 @@ test("Admin project create enforces assignment and private access", async () => 
   await outsider.agent.get(`/api/projects/${id}`).expect(404);
   await member.agent.get(`/api/projects/${id}`).expect(200);
   await owner.agent.patch(`/api/projects/${id}`).set("X-CSRF-Token", owner.csrf).send({ visibility: "public" }).expect(200);
-  const publicView = await outsider.agent.get(`/api/projects/${id}`).expect(200);
-  assert.equal(publicView.body.data.project.clientId, undefined);
-  assert.equal(publicView.body.data.project.client, undefined);
+  await outsider.agent.get(`/api/projects/${id}`).expect(404);
   await owner.agent.patch(`/api/projects/${id}`).set("X-CSRF-Token", owner.csrf).send({ visibility: "private" }).expect(200);
   await outsider.agent.get(`/api/projects/${id}`).expect(404);
 });
@@ -73,7 +71,7 @@ test("asset scope hides Draft from Clients and updates after reassignment", asyn
   assert.deepEqual((await Asset.find(await buildAssetScope(clientA))).map((asset) => asset.title), ["Approved concept"]);
   assert.equal(await Asset.countDocuments(await buildAssetScope(clientB)), 0);
   project.visibility = "public"; await project.save();
-  assert.equal((await Asset.findOne({ _id: approved._id, ...await buildAssetScope(clientB) }))?.title, "Approved concept");
+  assert.equal(await Asset.findOne({ _id: approved._id, ...await buildAssetScope(clientB) }), null);
   project.visibility = "private"; project.clientId = clientB._id; await project.save();
   assert.equal(await Asset.countDocuments(await buildAssetScope(clientA)), 0);
   assert.equal(await Asset.countDocuments(await buildAssetScope(clientB)), 1);

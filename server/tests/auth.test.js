@@ -19,7 +19,7 @@ beforeEach(async () => User.deleteMany({}));
 after(async () => { await disconnectDatabase(); await mongo?.stop(); });
 
 async function createAdmin(overrides = {}) {
-  return User.create({ name: "Admin User", email: "admin@brandhub.test", passwordHash: await hashPassword("AdminPass123"), role: "admin", ...overrides });
+  return User.create({ name: "Project Manager User", email: "admin@brandhub.test", passwordHash: await hashPassword("AdminPass123"), role: "project_manager", ...overrides });
 }
 async function login(agent, email, password) {
   return agent.post("/api/auth/login").send({ email, password });
@@ -27,7 +27,7 @@ async function login(agent, email, password) {
 
 test("public registration forces client role and never exposes passwordHash", async () => {
   const agent = request.agent(app);
-  const response = await agent.post("/api/auth/register").send({ name: "Test User", email: "test@example.com", password: "TestPassword123", role: "admin" }).expect(201);
+  const response = await agent.post("/api/auth/register").send({ name: "Test User", email: "test@example.com", password: "TestPassword123", role: "project_manager" }).expect(201);
   assert.equal(response.body.data.user.role, "client");
   assert.equal("passwordHash" in response.body.data.user, false);
   assert.equal((await User.findOne({ email: "test@example.com" })).role, "client");
@@ -46,7 +46,7 @@ test("login accepts valid credentials and rejects invalid or inactive users", as
   const admin = await createAdmin();
   const valid = await login(request.agent(app), admin.email, "AdminPass123");
   assert.equal(valid.status, 200);
-  assert.equal(valid.body.data.user.role, "admin");
+  assert.equal(valid.body.data.user.role, "project_manager");
   await login(request.agent(app), admin.email, "wrong-password").then((response) => assert.equal(response.status, 401));
   admin.isActive = false; await admin.save();
   await login(request.agent(app), admin.email, "AdminPass123").then((response) => assert.equal(response.status, 401));
@@ -61,14 +61,14 @@ test("logout invalidates the session and requires CSRF", async () => {
   await agent.get("/api/auth/me").expect(401);
 });
 
-test("protected and Admin-only user endpoints enforce authorization", async () => {
+test("protected and Project Manager-only user endpoints enforce authorization", async () => {
   await request(app).get("/api/users").expect(401);
   const client = request.agent(app);
   await client.post("/api/auth/register").send({ name: "Client User", email: "client@example.com", password: "ClientPass123" }).expect(201);
   await client.get("/api/users").expect(403);
 });
 
-test("Admin creates Designer who must change password before normal access", async () => {
+test("Project Manager creates Designer who must change password before normal access", async () => {
   await createAdmin();
   const admin = request.agent(app);
   const adminAuth = await login(admin, "admin@brandhub.test", "AdminPass123");
@@ -85,11 +85,11 @@ test("Admin creates Designer who must change password before normal access", asy
 test("ordinary users cannot promote themselves", async () => {
   const agent = request.agent(app);
   const registration = await agent.post("/api/auth/register").send({ name: "Client User", email: "client@example.com", password: "ClientPass123" }).expect(201);
-  await agent.patch(`/api/users/${registration.body.data.user.id}`).set("X-CSRF-Token", registration.body.data.csrfToken).send({ role: "admin" }).expect(403);
+  await agent.patch(`/api/users/${registration.body.data.user.id}`).set("X-CSRF-Token", registration.body.data.csrfToken).send({ role: "project_manager" }).expect(403);
   assert.equal((await User.findById(registration.body.data.user.id)).role, "client");
 });
 
-test("the last active Admin cannot be deactivated or demoted", async () => {
+test("the last active Project Manager cannot be deactivated or demoted", async () => {
   const adminUser = await createAdmin();
   const agent = request.agent(app);
   const auth = await login(agent, adminUser.email, "AdminPass123");

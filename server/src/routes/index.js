@@ -1,3 +1,4 @@
+import { reportRouter } from "./reportRoutes.js";
 import { Router } from "express";
 import { databaseStatus } from "../config/db.js";
 import { createAuthRouter } from "./authRoutes.js";
@@ -27,5 +28,6 @@ export function createApiRouter(options = {}) {
   router.use("/comments", commentRouter);
   router.use("/bookmarks", bookmarkRouter);
   router.use("/dashboard", dashboardRouter);
+  router.use("/reports", reportRouter);
   return router;
 }

@@ -1,3 +1,4 @@
+import { ReportsPage } from "../pages/app/ReportsPage";
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "../components/layout/AppShell";
@@ -32,23 +33,28 @@ function AuthenticatedApp() {
   const { user, logout } = useAuth();
   if (!user) return null;
   return <AppShell role={user.role} name={user.name} onLogout={logout}><Routes>
+    <Route index element={<Navigate to="dashboard" replace />} />
+    <Route path="reports" element={<ProtectedRoute roles={["project_manager", "super_admin"]}><ReportsPage /></ProtectedRoute>} />
     <Route path="dashboard" element={<DashboardPage />} />
     <Route path="profile" element={<ProfilePage />} />
     <Route path="settings" element={<SettingsPage />} />
-    <Route path="admin/users" element={<ProtectedRoute roles={["admin"]}><UsersPage /></ProtectedRoute>} />
-    <Route path="admin/requests" element={<ProtectedRoute roles={["admin"]}><RequestsPage admin /></ProtectedRoute>} />
+    <Route path="admin/users" element={<Navigate to="/app/management/users" replace />} />
+    <Route path="admin/requests" element={<Navigate to="/app/management/requests" replace />} />
+    <Route path="super-admin/users" element={<ProtectedRoute roles={["super_admin"]}><UsersPage /></ProtectedRoute>} />
+    <Route path="management/users" element={<ProtectedRoute roles={["project_manager"]}><UsersPage /></ProtectedRoute>} />
+    <Route path="management/requests" element={<ProtectedRoute roles={["project_manager"]}><RequestsPage admin /></ProtectedRoute>} />
     <Route path="projects" element={<ProjectsPage />} />
-    <Route path="projects/new" element={<ProtectedRoute roles={["admin"]}><ProjectFormPage /></ProtectedRoute>} />
+    <Route path="projects/new" element={<ProtectedRoute roles={["project_manager"]}><ProjectFormPage /></ProtectedRoute>} />
     <Route path="projects/:id" element={<ProjectDetailPage />} />
-    <Route path="projects/:id/edit" element={<ProtectedRoute roles={["admin"]}><ProjectFormPage /></ProtectedRoute>} />
-    <Route path="explore" element={<ProtectedRoute roles={["client"]}><ProjectsPage explore /></ProtectedRoute>} />
+    <Route path="projects/:id/edit" element={<ProtectedRoute roles={["project_manager"]}><ProjectFormPage /></ProtectedRoute>} />
+    <Route path="explore" element={<Navigate to="/app/projects" replace />} />
     <Route path="requests" element={<ProtectedRoute roles={["client"]}><RequestsPage /></ProtectedRoute>} />
     <Route path="requests/new" element={<ProtectedRoute roles={["client"]}><RequestFormPage /></ProtectedRoute>} />
     <Route path="assets" element={<AssetsPage />} />
-    <Route path="assets/upload" element={<ProtectedRoute roles={["admin", "designer"]}><AssetUploadPage /></ProtectedRoute>} />
+    <Route path="assets/upload" element={<ProtectedRoute roles={["project_manager", "designer"]}><AssetUploadPage /></ProtectedRoute>} />
     <Route path="assets/:id" element={<AssetDetailPage />} />
     <Route path="media" element={<MediaLibraryPage />} />
-    <Route path="media/upload" element={<MediaUploadPage />} />
+    <Route path="media/upload" element={<ProtectedRoute roles={["project_manager", "designer"]}><MediaUploadPage /></ProtectedRoute>} />
     <Route path="reviews" element={<ReviewsPage />} />
     <Route path="bookmarks" element={<BookmarksPage />} />
     <Route path="*" element={<NotFoundPage />} />

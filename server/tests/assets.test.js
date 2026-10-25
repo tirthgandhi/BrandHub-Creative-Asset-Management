@@ -31,7 +31,7 @@ before(async () => {
   app = createApp({ authRateLimit: 1000, sessionSecret: "phase-four-integration-secret-32-chars" });
   const passwordHash = await hashPassword("Password123");
   [admin, designer, client, outsider] = await User.create([
-    { name: "Admin", email: "admin@assets.test", passwordHash, role: "admin" },
+    { name: "Project Manager", email: "admin@assets.test", passwordHash, role: "project_manager" },
     { name: "Designer", email: "designer@assets.test", passwordHash, role: "designer" },
     { name: "Client", email: "client@assets.test", passwordHash, role: "client" },
     { name: "Outsider", email: "outsider@assets.test", passwordHash, role: "client" },
@@ -57,7 +57,7 @@ test("upload stores Draft and Revision 1; scoped gallery and deletion enforce ro
   project.visibility = "public"; await project.save();
   assert.equal((await other.agent.get("/api/assets").expect(200)).body.data.length, 0);
   await Asset.updateOne({ _id: id }, { $set: { status: "approved" } }); // Authorization fixture; the review transition belongs to Phase 5.
-  assert.equal((await other.agent.get("/api/assets").expect(200)).body.data.length, 1);
+  assert.equal((await other.agent.get("/api/assets").expect(200)).body.data.length, 0);
   project.visibility = "private"; await project.save();
   await other.agent.get(`/api/assets/${id}`).expect(404);
   await Asset.updateOne({ _id: id }, { $set: { status: "draft" } });
@@ -71,7 +71,7 @@ test("upload stores Draft and Revision 1; scoped gallery and deletion enforce ro
   assert.equal(deleted, 1);
 });
 
-test("Client request, Admin approval, Designer upload, and reload use persisted records", async () => {
+test("Client request, Project Manager approval, Designer upload, and reload use persisted records", async () => {
   const clientActor = await actor(client.email); const adminActor = await actor(admin.email); const designerActor = await actor(designer.email);
   const brief = await clientActor.agent.post("/api/project-requests").set("X-CSRF-Token", clientActor.csrf).send({ title: "New brand kit", description: "Create a new visual brand kit", category: "Brand Identity" }).expect(201);
   const approved = await adminActor.agent.patch(`/api/project-requests/${brief.body.data.projectRequest.id}`).set("X-CSRF-Token", adminActor.csrf).send({ decision: "approve", designerIds: [designer.id] }).expect(200);

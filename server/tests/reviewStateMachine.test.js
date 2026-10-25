@@ -4,7 +4,7 @@ import { nextStatus, isValidTransition, getAllowedActions, STATUSES, ACTIONS, RO
 
 describe("Review State Machine", () => {
   describe("Draft → In Review (Submit)", () => {
-    it("should allow Admin to submit draft", () => {
+    it("should allow Project Manager to submit draft", () => {
       const result = nextStatus(STATUSES.DRAFT, ACTIONS.SUBMIT, ROLES.ADMIN, {});
       assert.strictEqual(result.status, STATUSES.IN_REVIEW);
       assert.strictEqual(result.error, undefined);
@@ -36,7 +36,7 @@ describe("Review State Machine", () => {
   });
 
   describe("In Review → Approved (Approve)", () => {
-    it("should allow Admin to approve", () => {
+    it("should allow Project Manager to approve", () => {
       const result = nextStatus(STATUSES.IN_REVIEW, ACTIONS.APPROVE, ROLES.ADMIN, {});
       assert.strictEqual(result.status, STATUSES.APPROVED);
       assert.strictEqual(result.error, undefined);
@@ -68,7 +68,7 @@ describe("Review State Machine", () => {
   });
 
   describe("In Review → Changes Requested (Request Changes)", () => {
-    it("should allow Admin to request changes with note", () => {
+    it("should allow Project Manager to request changes with note", () => {
       const result = nextStatus(STATUSES.IN_REVIEW, ACTIONS.REQUEST_CHANGES, ROLES.ADMIN, { note: "Please adjust colors" });
       assert.strictEqual(result.status, STATUSES.CHANGES_REQUESTED);
       assert.strictEqual(result.error, undefined);
@@ -101,7 +101,7 @@ describe("Review State Machine", () => {
   });
 
   describe("Changes Requested → Draft (Revision Uploaded)", () => {
-    it("should allow Admin to upload revision", () => {
+    it("should allow Project Manager to upload revision", () => {
       const result = nextStatus(STATUSES.CHANGES_REQUESTED, ACTIONS.REVISION_UPLOADED, ROLES.ADMIN, {});
       assert.strictEqual(result.status, STATUSES.DRAFT);
       assert.strictEqual(result.error, undefined);
@@ -161,7 +161,7 @@ describe("Review State Machine", () => {
       assert.strictEqual(isValidTransition(STATUSES.IN_REVIEW, ACTIONS.APPROVE, ROLES.DESIGNER, {}), false);
     });
 
-    it("getAllowedActions should return correct actions for Admin on draft", () => {
+    it("getAllowedActions should return correct actions for Project Manager on draft", () => {
       const actions = getAllowedActions(STATUSES.DRAFT, ROLES.ADMIN, {});
       assert.ok(actions.includes(ACTIONS.SUBMIT));
       assert.strictEqual(actions.includes(ACTIONS.APPROVE), false);

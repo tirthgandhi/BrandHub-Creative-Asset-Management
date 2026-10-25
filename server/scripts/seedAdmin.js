@@ -12,11 +12,11 @@ async function seedAdmin() {
   if (!email || !password) throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD are required");
   assertStrongPassword(password);
   await connectDatabase(env.MONGODB_URI);
-  if (await User.exists({ role: "admin" })) {
+  if (await User.exists({ role: "project_manager" })) {
     console.log("An Admin already exists; no account was changed.");
     return;
   }
-  const admin = await User.create({ name, email, role: "admin", passwordHash: await hashPassword(password), mustChangePassword: false });
+  const admin = await User.create({ name, email, role: "project_manager", passwordHash: await hashPassword(password), mustChangePassword: false });
   console.log(`Created initial Admin ${admin.email}.`);
 }
 

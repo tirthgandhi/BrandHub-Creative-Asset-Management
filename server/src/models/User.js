@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, minlength: 2, maxlength: 80 },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 254, match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
   passwordHash: { type: String, required: true, select: false },
-  role: { type: String, enum: ["admin", "designer", "client"], required: true, default: "client", index: true },
+  role: { type: String, enum: ["super_admin", "project_manager", "designer", "client"], required: true, default: "client", index: true },
   avatarUrl: { type: String, default: "", maxlength: 500 },
   professionalTitle: { type: String, default: "", maxlength: 120 },
   bio: { type: String, default: "", maxlength: 1000 },
@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   mustChangePassword: { type: Boolean, default: false },
   authVersion: { type: Number, default: 0, select: false },
 }, { timestamps: true });
+
+userSchema.index({ role: 1 }, { unique: true, partialFilterExpression: { role: "super_admin" }, name: "one_super_admin" });
 
 userSchema.set("toJSON", {
   transform(_document, value) {

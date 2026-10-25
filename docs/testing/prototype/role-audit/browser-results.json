@@ -1,0 +1,931 @@
+{
+  "routes": [
+    {
+      "role": "guest",
+      "route": "/signup"
+    },
+    {
+      "role": "guest",
+      "route": "/forgot-password"
+    },
+    {
+      "role": "guest",
+      "route": "/reset-password"
+    },
+    {
+      "role": "guest",
+      "route": "/verify-email"
+    },
+    {
+      "role": "guest",
+      "route": "/missing-page"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/dashboard"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/projects"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/projects/6add888278e3d9dfb61c8d40"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/assets"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/assets/6add888378e3d9dfb61c8d41"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/media"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/reviews"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/bookmarks"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/profile"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/settings"
+    },
+    {
+      "role": "super_admin",
+      "route": "/change-password"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/admin/users"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/admin/requests"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/projects/new"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/projects/6add888278e3d9dfb61c8d40/edit"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/assets/upload"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/media/upload"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/dashboard"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/projects"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/projects/6add888278e3d9dfb61c8d40"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/assets"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/assets/6add888378e3d9dfb61c8d41"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/media"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/reviews"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/bookmarks"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/profile"
+    },
+    {
+      "role": "project_manager",
+      "route": "/app/settings"
+    }
+  ],
+  "themes": [
+    {
+      "theme": "morning",
+      "text": "#455b73",
+      "background": "rgba(247, 250, 255, 0.937)"
+    },
+    {
+      "theme": "afternoon",
+      "text": "#c7d3e8",
+      "background": "rgba(17, 36, 62, 0.937)"
+    },
+    {
+      "theme": "sunset",
+      "text": "#c7d3e8",
+      "background": "rgba(17, 36, 62, 0.937)"
+    },
+    {
+      "theme": "night",
+      "text": "#c7d3e8",
+      "background": "rgba(17, 36, 62, 0.937)"
+    }
+  ],
+  "deniedRoutes": [
+    {
+      "role": "guest",
+      "route": "/app/admin/users",
+      "result": "login redirect"
+    },
+    {
+      "role": "super_admin",
+      "route": "/app/requests/new",
+      "result": "permission denied"
+    }
+  ],
+  "errors": [],
+  "apiResponses": [
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 401
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 401
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects/6add888278e3d9dfb61c8d40",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects/6add888278e3d9dfb61c8d40",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/assets",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/assets/6add888378e3d9dfb61c8d41",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/assets/6add888378e3d9dfb61c8d41",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/assets/stored/6add888578e3d9dfb61c8d49",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/assets",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/assets",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/bookmarks",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/bookmarks",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/users",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/users",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/project-requests",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/users",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "super_admin",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 401
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 401
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/dashboard/stats",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/projects",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/projects/6add888278e3d9dfb61c8d40",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/projects/6add888278e3d9dfb61c8d40",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/assets",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/assets/6add888378e3d9dfb61c8d41",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/assets/6add888378e3d9dfb61c8d41",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/media",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/assets",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/assets",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/bookmarks",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/bookmarks",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "project_manager",
+      "path": "/api/auth/me",
+      "status": 200
+    }
+  ],
+  "visualChecks": [
+    {
+      "role": "super_admin",
+      "uniqueMedia": true,
+      "filters": true
+    },
+    {
+      "role": "super_admin",
+      "theme": "morning",
+      "headingText": "rgb(73, 102, 126)"
+    },
+    {
+      "role": "super_admin",
+      "theme": "afternoon",
+      "headingText": "rgb(72, 103, 128)"
+    },
+    {
+      "role": "super_admin",
+      "theme": "sunset",
+      "headingText": "rgb(114, 84, 109)"
+    },
+    {
+      "role": "super_admin",
+      "theme": "night",
+      "headingText": "rgb(185, 202, 232)"
+    },
+    {
+      "role": "project_manager",
+      "uniqueMedia": true,
+      "filters": true
+    }
+  ],
+  "passed": false,
+  "failure": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('h1,h2').first() to be visible\u001b[22m\n"
+}

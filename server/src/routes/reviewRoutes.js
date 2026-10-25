@@ -3,7 +3,7 @@ import { Asset } from "../models/Asset.js";
 import { AssetRevision } from "../models/AssetRevision.js";
 import { ReviewEvent } from "../models/ReviewEvent.js";
 import { Project } from "../models/Project.js";
-import { requireAuth, requirePasswordChanged } from "../middleware/auth.js";
+import { requireAuth, requirePasswordChanged, requireRole } from "../middleware/auth.js";
 import { requireCsrf } from "../middleware/csrf.js";
 import { receiveImage, validateImage } from "../middleware/uploadValidation.js";
 import { validate } from "../middleware/validate.js";
@@ -59,6 +59,7 @@ async function getAssetWithPermissions(req, assetId) {
  * Submit asset for review
  */
 reviewRouter.post("/:id/submit", 
+  requireRole("project_manager", "designer"),
   requireCsrf, 
   validate(submitAsset), 
   asyncHandler(async (req, res) => {
@@ -198,6 +199,7 @@ reviewRouter.patch("/:id/review",
  * Upload new revision after changes requested
  */
 reviewRouter.post("/:id/revisions",
+  requireRole("project_manager", "designer"),
   requireCsrf,
   receiveImage,
   validate(uploadRevision),

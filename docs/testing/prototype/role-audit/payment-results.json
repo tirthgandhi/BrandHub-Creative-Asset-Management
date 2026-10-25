@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "Client UI submits contact details and INR amount to the database",
+    "Manager sees the client's contact details and proposed amount",
+    "Manager approves the amount and assigns the designer",
+    "Declined demo payment shows an error and does not mark the request paid",
+    "Successful demo receipt persists after page reload",
+    "Manager sees the saved payment status and receipt",
+    "Contact, amount and receipt fit the mobile viewport"
+  ],
+  "requestId": "6add960439eb7d48aee9a863",
+  "reference": "DEMO-E18679D3",
+  "passed": true
+}

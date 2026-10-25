@@ -24,7 +24,8 @@ const ACTIONS = {
 };
 
 const ROLES = {
-  ADMIN: "admin",
+  ADMIN: "project_manager",
+  SUPER_ADMIN: "super_admin",
   DESIGNER: "designer",
   CLIENT: "client",
 };

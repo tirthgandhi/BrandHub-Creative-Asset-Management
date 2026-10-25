@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import mongoose from "mongoose";
 import { z } from "zod";
 import { Router } from "express";
@@ -16,13 +17,14 @@ export const projectRequestRouter = Router();
 projectRequestRouter.use(requireAuth, requirePasswordChanged);
 const requestWriteLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: true, legacyHeaders: false, message: { success: false, error: { code: "RATE_LIMITED", message: "Too many project requests", details: [] } } });
 const requestId = envelope(z.any(), idParams);
-const serialize = (request) => ({ id: request.id, clientId: String(request.clientId?._id || request.clientId), ...(request.clientId?.name ? { clientName: request.clientId.name } : {}), title: request.title, description: request.description, category: request.category, desiredDeadline: request.desiredDeadline || null, status: request.status, adminNote: request.adminNote, reviewedBy: request.reviewedBy ? String(request.reviewedBy) : null, reviewedAt: request.reviewedAt || null, projectId: request.projectId ? String(request.projectId) : null, createdAt: request.createdAt, updatedAt: request.updatedAt });
+const serialize = (request) => ({ id: request.id, clientId: String(request.clientId?._id || request.clientId), ...(request.clientId?.name ? { clientName: request.clientId.name } : {}), title: request.title, description: request.description, category: request.category, contactDetails: request.contactDetails || {}, amount: (request.amountPaise || 0) / 100, currency: "INR", payment: { status: request.paymentStatus || "unpaid", method: request.paymentMethod || null, reference: request.paymentReference || null, paidAt: request.paymentPaidAt || null, amount: (request.paymentAmountPaise || 0) / 100, isDemo: true }, desiredDeadline: request.desiredDeadline || null, status: request.status, adminNote: request.adminNote, reviewedBy: request.reviewedBy ? String(request.reviewedBy) : null, reviewedAt: request.reviewedAt || null, projectId: request.projectId ? String(request.projectId) : null, createdAt: request.createdAt, updatedAt: request.updatedAt });
 
 projectRequestRouter.post("/", requireRole("client"), requestWriteLimiter, requireCsrf, validate(requestCreate), asyncHandler(async (req, res) => {
   await ProjectRequest.init();
   for (let slot = 0; slot < 5; slot++) {
     try {
-      const request = await ProjectRequest.create({ ...req.validated.body, clientId: req.user._id, pendingSlot: slot });
+      const { amount = 0, contactDetails, ...brief } = req.validated.body;
+      const request = await ProjectRequest.create({ ...brief, contactDetails: contactDetails || { name: req.user.name, email: req.user.email }, amountPaise: Math.round(amount * 100), clientId: req.user._id, pendingSlot: slot });
       return res.status(201).json({ data: { projectRequest: serialize(request) } });
     } catch (error) {
       if (error.code !== 11000) throw error;
@@ -31,16 +33,16 @@ projectRequestRouter.post("/", requireRole("client"), requestWriteLimiter, requi
   throw new AppError(409, "CONFLICT", "You already have five pending requests");
 }));
 
-projectRequestRouter.get("/", requireRole("admin", "client"), validate(requestList), asyncHandler(async (req, res) => {
+projectRequestRouter.get("/", requireRole("project_manager", "client"), validate(requestList), asyncHandler(async (req, res) => {
   const { page, limit, status, category, sort } = req.validated.query;
-  const filter = req.user.role === "admin" ? {} : { clientId: req.user._id };
+  const filter = ["project_manager", "super_admin"].includes(req.user.role) ? {} : { clientId: req.user._id };
   if (status) filter.status = status;
   if (category) filter.category = category;
-  const [rows, total] = await Promise.all([ProjectRequest.find(filter).sort(sort).skip((page - 1) * limit).limit(limit).populate(req.user.role === "admin" ? { path: "clientId", select: "name" } : []), ProjectRequest.countDocuments(filter)]);
+  const [rows, total] = await Promise.all([ProjectRequest.find(filter).sort(sort).skip((page - 1) * limit).limit(limit).populate(["project_manager", "super_admin"].includes(req.user.role) ? { path: "clientId", select: "name" } : []), ProjectRequest.countDocuments(filter)]);
   res.json({ data: rows.map(serialize), pagination: { page, limit, total } });
 }));
 
-projectRequestRouter.get("/:id", requireRole("admin", "client"), validate(requestId), asyncHandler(async (req, res) => {
+projectRequestRouter.get("/:id", requireRole("project_manager", "client"), validate(requestId), asyncHandler(async (req, res) => {
   const filter = { _id: req.validated.params.id };
   if (req.user.role === "client") filter.clientId = req.user._id;
   const request = await ProjectRequest.findOne(filter);
@@ -55,6 +57,19 @@ projectRequestRouter.patch("/:id/cancel", requireRole("client"), requireCsrf, va
     throw new AppError(own ? 409 : 404, own ? "CONFLICT" : "NOT_FOUND", own ? "Only pending requests can be cancelled" : "Project request not found");
   }
   res.json({ data: { projectRequest: serialize(request) } });
+}));
+
+// Prototype-only checkout: no payment provider or real financial details are involved.
+projectRequestRouter.post("/:id/payment", requireRole("client"), requireCsrf, validate(envelope(z.strictObject({ method: z.enum(["upi", "card", "bank"]), outcome: z.enum(["success", "failure"]).default("success") }), idParams)), asyncHandler(async (req, res) => {
+  const request = await ProjectRequest.findOne({ _id: req.validated.params.id, clientId: req.user._id });
+  if (!request) throw new AppError(404, "NOT_FOUND", "Project request not found");
+  if (request.status !== "approved" || !request.projectId) throw new AppError(409, "CONFLICT", "Payment is available after the Project Manager approves your request");
+  if (!request.amountPaise) throw new AppError(422, "VALIDATION_ERROR", "This request does not have a payable amount");
+  if (request.paymentStatus === "paid") return res.json({ data: { projectRequest: serialize(request) } });
+  if (req.validated.body.outcome === "failure") throw new AppError(402, "DEMO_PAYMENT_FAILED", "Demo payment was declined. No money was charged. You can try again.");
+  const paid = await ProjectRequest.findOneAndUpdate({ _id: request._id, clientId: req.user._id, status: "approved", paymentStatus: { $ne: "paid" } }, { $set: { paymentStatus: "paid", paymentMethod: req.validated.body.method, paymentReference: `DEMO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`, paymentPaidAt: new Date(), paymentAmountPaise: request.amountPaise } }, { returnDocument: "after" });
+  const result = paid || await ProjectRequest.findById(request._id);
+  res.json({ data: { projectRequest: serialize(result) } });
 }));
 
 async function approveStandalone(request, actor, body) {
@@ -73,7 +88,7 @@ async function approveStandalone(request, actor, body) {
   }
 }
 
-projectRequestRouter.patch("/:id", requireRole("admin"), requireCsrf, validate(requestDecision), asyncHandler(async (req, res) => {
+projectRequestRouter.patch("/:id", requireRole("project_manager"), requireCsrf, validate(requestDecision), asyncHandler(async (req, res) => {
   const request = await ProjectRequest.findById(req.validated.params.id);
   if (!request) throw new AppError(404, "NOT_FOUND", "Project request not found");
   const body = req.validated.body;

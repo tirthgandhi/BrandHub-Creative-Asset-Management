@@ -3,11 +3,14 @@ import type { Pagination } from "./projects";
 
 export type Media = {
   id: string;
+  checksum?: string;
   title: string;
   description: string;
   category: string;
   contentType: "gallery" | "post" | "story" | "reel";
-  mediaType: "image" | "video";
+  mediaType: "image" | "video" | "document";
+  originalFilename?: string;
+  mimeType?: string;
   storageType: "local" | "gridfs";
   url: string;
   thumbnailUrl: string | null;

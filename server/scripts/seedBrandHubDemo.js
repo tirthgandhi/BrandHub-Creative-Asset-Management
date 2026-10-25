@@ -96,9 +96,9 @@ async function main() {
   const passwordHash = await hashPassword(process.env.DEMO_USER_PASSWORD);
   const adminEmail = "admin@brandhub.example";
   const existingAdmin = await User.findOne({ email: adminEmail });
-  if (existingAdmin && existingAdmin.role !== "admin") throw new Error("Demo admin email belongs to a different role");
-  const adminId = existingAdmin?._id || idFor("admin", adminEmail);
-  if (!existingAdmin) await User.create({ _id: adminId, name: "BRANDHUB Administrator", email: adminEmail, passwordHash: await hashPassword(process.env.ADMIN_PASSWORD), role: "admin", demoKey: "brandhub:admin" });
+  if (existingAdmin && existingAdmin.role !== "project_manager") throw new Error("Demo admin email belongs to a different role");
+  const adminId = existingAdmin?._id || idFor("project_manager", adminEmail);
+  if (!existingAdmin) await User.create({ _id: adminId, name: "BRANDHUB Administrator", email: adminEmail, passwordHash: await hashPassword(process.env.ADMIN_PASSWORD), role: "project_manager", demoKey: "brandhub:admin" });
   else if (!existingAdmin.demoKey) await User.updateOne({ _id: adminId }, { $set: { demoKey: "brandhub:admin" } });
   for (const [brandName, category, person, description] of clients) {
     const clientId = idFor("client", brandName);

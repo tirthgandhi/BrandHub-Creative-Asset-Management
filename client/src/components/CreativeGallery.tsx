@@ -72,11 +72,11 @@ export function CreativeGallery() {
         ))}
       </div>
       <p className="gallery-footnote">
-        Original campaign studies for fictional brands. Reel covers are static design concepts, not playable videos.
+        Original campaign studies for fictional brands. Select a visual to explore it. Film previews open as playable videos.
       </p>
       {selected && (
         <Modal title={selected.title} close={() => setSelected(null)}>
-          <div className="campaign-detail"><CampaignArtwork item={selected}/></div>
+          <div className="campaign-detail">{selected.videoSrc ? <video src={selected.videoSrc} controls playsInline style={{width:"100%",maxHeight:"70vh"}} /> : <CampaignArtwork item={selected}/>}</div>
           <p className="detail-caption">
             {selected.category} · {selected.format} · Fictional client concept, {selected.brand}
           </p>

@@ -18,7 +18,15 @@ mediaRouter.use(requireAuth, requirePasswordChanged);
 
 const imageLimit = () => Number(process.env.MEDIA_IMAGE_MAX_BYTES || 5 * 1024 * 1024);
 const videoLimit = () => Number(process.env.MEDIA_VIDEO_MAX_BYTES || 20 * 1024 * 1024);
+const documentLimit = () => Number(process.env.MEDIA_DOCUMENT_MAX_BYTES || 10 * 1024 * 1024);
 const formats = {
+  ".pdf": { mime: "application/pdf", mediaType: "document", headerBytes: 5, signature: b => b.toString("ascii", 0, 5) === "%PDF-" },
+  ".txt": { mime: "text/plain", mediaType: "document", headerBytes: 1, signature: b => !b.some(byte => byte < 32 && ![9, 10, 13].includes(byte)) },
+  ".csv": { mime: "text/csv", aliases: ["application/vnd.ms-excel", "text/plain"], mediaType: "document", headerBytes: 1, signature: b => !b.some(byte => byte < 32 && ![9, 10, 13].includes(byte)) },
+  ".docx": { mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", mediaType: "document", headerBytes: 4, signature: b => b.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])) },
+  ".xlsx": { mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mediaType: "document", headerBytes: 4, signature: b => b.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])) },
+  ".pptx": { mime: "application/vnd.openxmlformats-officedocument.presentationml.presentation", mediaType: "document", headerBytes: 4, signature: b => b.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])) },
+  ".zip": { mime: "application/zip", aliases: ["application/x-zip-compressed"], mediaType: "document", headerBytes: 4, signature: b => b.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])) },
   ".jpg": { mime: "image/jpeg", mediaType: "image", signature: (b) => b[0] === 255 && b[1] === 216 && b[2] === 255 },
   ".jpeg": { mime: "image/jpeg", mediaType: "image", signature: (b) => b[0] === 255 && b[1] === 216 && b[2] === 255 },
   ".png": { mime: "image/png", mediaType: "image", signature: (b) => b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) },
@@ -29,7 +37,7 @@ const formats = {
 
 const id = (value) => String(value?._id || value);
 function member(user, project) {
-  return user.role === "admin" || user.role === "client" && id(project.clientId) === user.id || user.role === "designer" && project.designerIds.some((designerId) => id(designerId) === user.id);
+  return ["project_manager", "super_admin"].includes(user.role) || user.role === "client" && id(project.clientId) === user.id || user.role === "designer" && project.designerIds.some((designerId) => id(designerId) === user.id);
 }
 async function accessibleProject(user, projectId) {
   if (!mongoose.isValidObjectId(projectId)) throw new AppError(422, "VALIDATION_ERROR", "Invalid project ID");
@@ -45,7 +53,7 @@ async function accessibleMedia(user, mediaId) {
   return asset;
 }
 function serialize(asset) {
-  return { id: asset.id, title: asset.title, description: asset.description, category: asset.category,
+  return { id: asset.id, originalFilename: asset.originalFilename, checksum: asset.checksum, title: asset.title, description: asset.description, category: asset.category,
     contentType: asset.contentType, mediaType: asset.mediaType, storageType: asset.storageType,
     url: asset.storageType === "local" ? asset.localPath : `/api/media/${asset.id}/stream`,
     thumbnailUrl: asset.thumbnailUrl || null, mimeType: asset.mimeType, fileSize: asset.fileSize,
@@ -76,21 +84,21 @@ function readMultipart(req, bucket, maxBytes) {
         let bytes = 0;
         let first = true;
         let header = Buffer.alloc(0);
-        let validationError = !format || format.mime !== info.mimeType ? new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File type and filename do not match a supported image or video") : null;
+        let validationError = !format || ![format.mime, ...(format.aliases || []), "application/octet-stream"].includes(info.mimeType) ? new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File type and filename do not match a supported image, video or document") : null;
         try {
           for await (const chunk of file) {
             if (validationError) continue;
             let payload = chunk;
             if (first) {
               header = Buffer.concat([header, chunk]);
-              if (header.length < 12) continue;
+              if (header.length < (format.headerBytes || 12)) continue;
               payload = header;
               header = Buffer.alloc(0);
               first = false;
               if (!format.signature(payload)) { validationError = new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File contents do not match the selected type"); continue; }
             }
             bytes += payload.length;
-            if (bytes > maxBytes || bytes > (format.mediaType === "image" ? imageLimit() : videoLimit())) { validationError = new AppError(413, "PAYLOAD_TOO_LARGE", "File exceeds the configured size limit"); continue; }
+            if (bytes > maxBytes || bytes > (format.mediaType === "image" ? imageLimit() : format.mediaType === "document" ? documentLimit() : videoLimit())) { validationError = new AppError(413, "PAYLOAD_TOO_LARGE", "File exceeds the configured size limit"); continue; }
             if (!upload) {
               upload = bucket.openUploadStream(`${crypto.randomUUID()}${extension}`, { metadata: { mimeType: format.mime } });
               upload.on("error", () => { /* Abort can emit after the rejected upload task has settled. */ });
@@ -98,7 +106,7 @@ function readMultipart(req, bucket, maxBytes) {
             hash.update(payload);
             if (!upload.write(payload)) await once(upload, "drain");
           }
-          if (first && !validationError) validationError = new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File is too small to match a supported image or video");
+          if (first && !validationError) validationError = new AppError(415, "UNSUPPORTED_MEDIA_TYPE", "File is too small to match a supported image, video or document");
           if (validationError) throw validationError;
           if (file.truncated) throw new AppError(413, "PAYLOAD_TOO_LARGE", "File exceeds the configured size limit");
           if (!bytes) throw new AppError(422, "VALIDATION_ERROR", "Choose a nonempty file");
@@ -122,7 +130,7 @@ function readMultipart(req, bucket, maxBytes) {
   });
 }
 
-mediaRouter.post("/upload", requireCsrf, asyncHandler(async (req, res) => {
+mediaRouter.post("/upload", requireRole("project_manager", "designer"), requireCsrf, asyncHandler(async (req, res) => {
   const project = await accessibleProject(req.user, req.query.projectId);
   const declared = Number(req.get("X-Upload-Size"));
   if (!Number.isSafeInteger(declared) || declared < 1 || declared > videoLimit()) throw new AppError(413, "PAYLOAD_TOO_LARGE", "Upload size is missing or exceeds the video limit");
@@ -136,7 +144,7 @@ mediaRouter.post("/upload", requireCsrf, asyncHandler(async (req, res) => {
     const title = String(parsed.fields.title || path.parse(file.originalFilename).name).trim();
     const category = String(parsed.fields.category || "uncategorized").trim().toLowerCase();
     const contentType = String(parsed.fields.contentType || "gallery");
-    if (title.length < 2 || title.length > 120 || !/^[a-z][a-z0-9-]{1,59}$/.test(category) || !["gallery", "post", "story", "reel"].includes(contentType) || contentType === "reel" && file.mediaType !== "video") throw new AppError(422, "VALIDATION_ERROR", "Invalid media details");
+    if (title.length < 2 || title.length > 120 || !/^[a-z][a-z0-9-]{1,59}$/.test(category) || !["gallery", "post", "story", "reel"].includes(contentType) || contentType === "reel" && file.mediaType !== "video" || file.mediaType === "document" && contentType !== "gallery") throw new AppError(422, "VALIDATION_ERROR", "Invalid media details");
     const asset = await MediaAsset.create({ ...file, title, category, contentType, storageType: "gridfs", uploadedBy: req.user._id, ownerClientId: project.clientId, assignedDesignerId: req.user.role === "designer" ? req.user._id : project.designerIds[0] || null, projectId: project._id, visibility: "private", status: "draft" });
     await releaseReservation(file.fileSize);
     committed = true;
@@ -147,11 +155,11 @@ mediaRouter.post("/upload", requireCsrf, asyncHandler(async (req, res) => {
   } finally { if (!committed) await releaseReservation(); }
 }));
 
-mediaRouter.get("/usage", requireRole("admin"), asyncHandler(async (_req, res) => res.json({ data: await mediaStorageUsage() })));
+mediaRouter.get("/usage", requireRole("project_manager"), asyncHandler(async (_req, res) => res.json({ data: await mediaStorageUsage() })));
 mediaRouter.get("/", asyncHandler(async (req, res) => {
   const page = Math.max(1, Math.min(100000, Number(req.query.page) || 1));
   const limit = Math.max(1, Math.min(30, Number(req.query.limit) || 12));
-  const projectFilter = req.user.role === "admin" ? {} : req.user.role === "client" ? { clientId: req.user._id } : { designerIds: req.user._id };
+  const projectFilter = ["project_manager", "super_admin"].includes(req.user.role) ? {} : req.user.role === "client" ? { clientId: req.user._id } : { designerIds: req.user._id };
   const projectIds = await Project.distinct("_id", { ...projectFilter, status: { $ne: "archived" } });
   const filter = { projectId: { $in: projectIds } };
   if (req.query.projectId) { await accessibleProject(req.user, req.query.projectId); filter.projectId = req.query.projectId; }
@@ -164,6 +172,7 @@ mediaRouter.get("/:id", asyncHandler(async (req, res) => res.json({ data: { medi
 mediaRouter.get("/:id/stream", asyncHandler(async (req, res) => {
   const asset = await accessibleMedia(req.user, req.params.id);
   if (asset.storageType !== "gridfs") return res.redirect(asset.localPath);
+  if (asset.mediaType === "document") res.set("Content-Disposition", `attachment; filename*=UTF-8''${encodeURIComponent(asset.originalFilename)}`);
   const size = asset.fileSize;
   const range = req.get("Range");
   let start = 0;
@@ -183,9 +192,9 @@ mediaRouter.get("/:id/stream", asyncHandler(async (req, res) => {
   stream.on("error", () => { if (!res.headersSent) res.status(503).end(); else res.destroy(); });
   stream.pipe(res);
 }));
-mediaRouter.patch("/:id", requireCsrf, asyncHandler(async (req, res) => {
+mediaRouter.patch("/:id", requireRole("project_manager", "designer"), requireCsrf, asyncHandler(async (req, res) => {
   const asset = await accessibleMedia(req.user, req.params.id);
-  if (asset.storageType !== "gridfs" || req.user.role !== "admin" && id(asset.uploadedBy) !== req.user.id) throw new AppError(403, "FORBIDDEN", "You cannot edit this media");
+  if (asset.storageType !== "gridfs" || !["project_manager", "super_admin"].includes(req.user.role) && id(asset.uploadedBy) !== req.user.id) throw new AppError(403, "FORBIDDEN", "You cannot edit this media");
   const title = String(req.body.title || "").trim();
   const description = String(req.body.description || "").trim();
   if (title.length < 2 || title.length > 120 || description.length > 2000) throw new AppError(422, "VALIDATION_ERROR", "Invalid media details");
@@ -193,9 +202,9 @@ mediaRouter.patch("/:id", requireCsrf, asyncHandler(async (req, res) => {
   await asset.save();
   res.json({ data: { media: serialize(asset) } });
 }));
-mediaRouter.delete("/:id", requireCsrf, asyncHandler(async (req, res) => {
+mediaRouter.delete("/:id", requireRole("project_manager", "designer"), requireCsrf, asyncHandler(async (req, res) => {
   const asset = await accessibleMedia(req.user, req.params.id);
-  if (asset.storageType !== "gridfs" || asset.status === "approved" || req.user.role !== "admin" && id(asset.uploadedBy) !== req.user.id) throw new AppError(403, "FORBIDDEN", "You cannot delete this media");
+  if (asset.storageType !== "gridfs" || asset.status === "approved" || !["project_manager", "super_admin"].includes(req.user.role) && id(asset.uploadedBy) !== req.user.id) throw new AppError(403, "FORBIDDEN", "You cannot delete this media");
   await mediaBucket().delete(asset.gridFsFileId);
   await asset.deleteOne();
   await releaseMediaBytes(asset.fileSize);

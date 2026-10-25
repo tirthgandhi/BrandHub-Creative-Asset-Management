@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema({
   storageType: { type: String, enum: ["local", "gridfs"], required: true },
-  mediaType: { type: String, enum: ["image", "video"], required: true },
+  mediaType: { type: String, enum: ["image", "video", "document"], required: true },
   title: { type: String, required: true, trim: true, maxlength: 120 },
   description: { type: String, default: "", trim: true, maxlength: 2000 },
   category: { type: String, required: true, trim: true, maxlength: 60 },

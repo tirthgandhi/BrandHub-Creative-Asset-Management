@@ -1,99 +1,431 @@
+<div align="center">
+
 # BrandHub
 
-BrandHub is a creative project and media workspace for agency administrators, designers, and clients. Teams can organize projects, manage design reviews, discuss revisions, and keep campaign images and videos together.
+**Creative Asset Management & Collaboration**
 
-The application uses React, TypeScript, Vite, and React Router in the client; Node.js, Express, and JavaScript in the server; and MongoDB with Mongoose for records and sessions. Design-review images use the existing authenticated Cloudinary delivery flow. The separate project-media gallery stores new website uploads in MongoDB GridFS. The supplied demo catalog uses optimized local static files, with metadata in MongoDB.
+A shared workspace for creative briefs, project delivery, asset reviews, and client approvals.
 
-## What works
+React 19 · TypeScript · Vite · Express 5 · MongoDB
 
-- Client registration, login/logout, Mongo-backed sessions, role protection, administrator user management, and forced password changes for new designers.
-- Project and project-request workflows with scoped access, assignment, public discovery, and approval.
-- Design assets with image upload, metadata, private delivery, draft submission, client/admin review, change requests, version history, comments, and bookmarks.
-- Project media gallery with posts, stories, reels, image/video upload, GridFS streaming, byte-range video playback, metadata editing, and authorized deletion.
-- Role-based dashboards backed by database counts, recent review activity, profile editing, theme selection, and reduced-motion preference.
-- Responsive landing, authentication, and workspace pages.
+[Getting started](#getting-started) · [Screenshots](#screenshots) · [Login accounts](#login-accounts) · [Configuration](#configuration) · [Deployment](#deployment)
 
-The demo seed in `brandhub_demo` contains 15 fictional clients, 8 fictional designers, 1 admin, 15 brands, 30 projects, 30 campaigns, and 26 categorized media records. The files comprise 14 optimized images and 12 videos. The seed is repeatable and does not delete existing records. Usage rights for the supplied files have **not** been verified.
+</div>
 
-## Roles
+![BrandHub landing page with campaign artwork and creative workspace introduction](docs/screenshots/readme/landing.png)
 
-| Role | Main actions |
+## Overview
+
+BrandHub is a full-stack internship prototype that brings Super Admins, Project Managers, Designers, and Clients into one creative workflow. Clients submit briefs, management assigns work, designers upload deliverables, and clients review revisions in the context of their own projects.
+
+The application includes a public landing page, authenticated role-based workspaces, a media library, dashboard analytics, and downloadable management reports. Payments are explicitly simulated; no real funds move or payment credentials are collected. Deployment and email delivery require separate verification in the target environment.
+
+## Contents
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Roles and permissions](#roles-and-permissions)
+- [Technology and architecture](#technology-and-architecture)
+- [Getting started](#getting-started)
+- [Configuration](#configuration)
+- [Login accounts](#login-accounts)
+- [Creative workflow](#creative-workflow)
+- [Application routes](#application-routes)
+- [API overview](#api-overview)
+- [Project structure](#project-structure)
+- [Development commands](#development-commands)
+- [Testing and verification](#testing-and-verification)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Documentation and contribution](#documentation-and-contribution)
+- [Project status and license](#project-status-and-license)
+
+## Features
+
+| Area | Capabilities |
 | --- | --- |
-| Admin | Manage users and projects, review requests and assets, access scoped reports |
-| Designer | Work on assigned projects, upload design assets, submit and revise them |
-| Client | Request projects, review assigned work, comment, bookmark, and browse project media |
+| Public experience | Campaign landing page, creative gallery, local photography/video assets, and responsive layouts. |
+| Authentication | Role selection, session-based login, Client signup, password-change and recovery screens, and account settings. |
+| Administration | One Super Admin, privileged account administration, Project Manager team management, and account activation controls. |
+| Briefs and requests | Client contact details, company, description, proposed INR amount, and management approval decisions. |
+| Project delivery | Client ownership, designer assignment, project details, status tracking, search, and filtering. |
+| Creative assets | Authorized uploads, previews, revisions, submission for review, and approval/change-request history. |
+| Collaboration | Asset comments, review queues, and personal bookmarks. |
+| Media library | Project-scoped images and videos, supplied static demo media, and GridFS-backed uploads. |
+| Analytics | Scoped project counts, design-stage charts, approval progress, and designer workload views. |
+| Reports | Management summaries and branded PDF exports filtered by year/month. |
+| Payment simulation | Demo UPI/card/bank checkout, simulated declines, and persisted receipts after approval. |
+| Appearance | Morning, afternoon, sunset, and night atmosphere themes with desktop and mobile navigation. |
 
-The server enforces project membership and role rules on every protected API route. A private resource outside a user's scope returns 404.
+## Screenshots
 
-## Project layout
+The landing and login images show the updated local interface. Dashboard, analytics, and mobile images are existing role-audit captures; their data and navigation reflect the time they were captured.
 
-| Path | Purpose |
+### Sign in
+
+Choose a role and enter credentials manually. The login page has no demo autofill button or displayed password.
+
+![BrandHub role-based login without demo autofill controls](docs/screenshots/readme/login.png)
+
+### Workspace dashboard
+
+![Super Admin dashboard with workspace totals and design pipeline](docs/screenshots/readme/dashboard.png)
+
+### Design analytics
+
+![Designer analytics showing pipeline stages and approval progress](docs/screenshots/readme/analytics.png)
+
+### Mobile workspace
+
+<img src="docs/screenshots/readme/mobile.png" alt="Client workspace on a mobile screen" width="320" />
+
+## Roles and permissions
+
+| Role | Stored value | Main responsibilities |
+| --- | --- | --- |
+| Super Admin | `super_admin` | Oversee the workspace, manage privileged accounts, and access management functions. A partial unique database index limits this role to one account. |
+| Admin / Project Manager | `project_manager` | Manage projects, assign designers, approve briefs, manage basic team accounts, and export reports. |
+| Designer | `designer` | Work on assigned projects, upload deliverables and revisions, and respond to review feedback. |
+| Client | `client` | Submit briefs, view owned projects, review designs, comment, and complete simulated checkout on eligible approved requests. |
+
+The former Admin role is represented by `project_manager`. Choosing a role on the login form does not grant access: the API checks the stored account role and project membership. Super Admin inherits management permissions. Clients and Designers receive scoped project data.
+
+## Technology and architecture
+
+| Layer | Implementation |
 | --- | --- |
-| `client/src/` | React pages, components, themes, and API services |
-| `client/public/demo-media/` | Optimized demo images, videos, and posters |
-| `server/src/` | Express routes, models, middleware, and storage services |
-| `server/scripts/` | Demo preparation, seeding, and media utilities |
-| `server/tests/` | API and storage integration tests |
-| `docs/` | Architecture notes, setup, handoffs, media guide, and test evidence |
+| Frontend | React 19, TypeScript, React Router 7, Vite 7, Tailwind CSS 4, GSAP, Lucide icons, Axios. |
+| Backend | Node.js, Express 5, Mongoose 9, Zod validation, and PDFKit reports. |
+| Database | MongoDB for application records, MongoDB-backed sessions, and GridFS file storage. |
+| Optional storage | Cloudinary support for legacy asset records and configured storage flows. |
+| Security | Password hashing with bcryptjs, HTTP-only session cookies, CSRF checks, Helmet headers, rate limits, and server-side authorization. |
+| Verification | ESLint, TypeScript, Node test runner, Supertest, mongodb-memory-server, and Playwright browser scripts. |
+| Packaging | npm workspaces for `client/` and `server/`; Vercel configuration for same-origin hosting. |
 
-## Local setup
+```text
+Browser / React
+    | /api (Vite proxy locally; same-origin function on Vercel)
+Express API
+    |-- MongoDB: users, projects, requests, assets, comments, sessions
+    |-- GridFS: uploaded files
+    |-- Optional Cloudinary: legacy/configured storage
+    `-- PDFKit: generated management reports
 
-Install Node.js and a MongoDB instance or Atlas database. From the repository root:
+client/public/demo-media/ --> supplied static images and videos
+```
 
-```sh
+## Getting started
+
+### Prerequisites
+
+- Git, npm, and a current Node.js LTS version compatible with Vite 7 and Mongoose 9. Node.js 22.12+ is a suitable baseline; this repository does not pin an engine version.
+- A local MongoDB service or an Atlas development database for persistent operation.
+- A modern browser. Browser audit scripts additionally need an installed Chromium-compatible browser.
+
+### 1. Install the project
+
+```bash
+git clone https://github.com/tirthgandhi/BrandHub-Creative-Asset-Management.git
+cd BrandHub-Creative-Asset-Management
 npm ci
 ```
 
-Create `server/.env` from `server/.env.example`. Set `MONGODB_URI`, `SESSION_SECRET`, `CLIENT_URL`, and the Cloudinary values needed by the existing design-asset flow. The Atlas demo URI must target `/brandhub_demo` when running the demo seed. Keep this file untracked. Do not put secrets in a `VITE_` variable. For the client, use `VITE_API_URL` when the API is hosted at a different origin; the local Vite proxy defaults to port 5000 and may be overridden with `VITE_API_PROXY_TARGET`.
+Run commands from the repository root unless a different directory is specified.
 
-```sh
+### 2. Configure the server
+
+PowerShell:
+
+```powershell
+Copy-Item server/.env.example server/.env
+```
+
+macOS/Linux:
+
+```bash
+cp server/.env.example server/.env
+```
+
+If `server/.env` already exists, edit it instead of overwriting it. Set `MONGODB_URI`, replace `SESSION_SECRET` with at least 32 random characters, and use `CLIENT_URL=http://127.0.0.1:5173` for the URLs below. The server workspace loads **`server/.env`**, not a root `.env` file.
+
+### 3. Start the API and frontend
+
+Terminal 1:
+
+```bash
 npm run dev:server
+```
+
+Terminal 2:
+
+```bash
 npm run dev:client
 ```
 
-Open `http://localhost:5173`. See [local setup](docs/setup/LOCAL_SETUP.md) for additional environment details.
+- Frontend: <http://127.0.0.1:5173>
+- API health: <http://127.0.0.1:5000/api/health>
+- Login: <http://127.0.0.1:5173/login>
 
-## Demo data and credentials
+Vite proxies `/api` requests to port 5000. Keep the same hostname in the browser and `CLIENT_URL`. If Vite chooses another port, update `CLIENT_URL` and restart the API.
 
-The demo files are already in `client/public/demo-media/`. To regenerate them from the supplied archive, extract the source ZIP to `.tmp/brandhub-feed/` or set `BRANDHUB_MEDIA_DIR` to another extracted folder, then run:
+### 4. Create an initial management account
 
-```sh
-npm run media:prepare-local --workspace @brandhub/server
-npm run seed:brandhub:dry-run --workspace @brandhub/server
-npm run seed:brandhub --workspace @brandhub/server
-npm run verify:brandhub-seed --workspace @brandhub/server
+Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_NAME` in `server/.env`, then run:
+
+```bash
+npm run seed:admin
 ```
 
-Set `DEMO_USER_PASSWORD` and `ADMIN_PASSWORD` in the ignored `server/.env` before seeding. The demo admin email is `admin@brandhub.example`; fictional client and designer emails end in `@brandhub.example`. The generated local passwords are stored only in `server/.env`, never in Git. These are development accounts and should not be used as production credentials. See the [hybrid media guide](docs/HYBRID_MEDIA.md) for the storage design and verified seed counts.
+This creates a Project Manager using the configured credentials and does not replace an existing account. Follow any required password-change prompt after signing in. Public signup creates Client accounts; it does not create privileged users.
 
-## Main routes and API
+### Optional: disposable local preview
 
-| Browser route | Purpose | API |
+```bash
+npm run dev:preview-api
+```
+
+Run this **instead of** the normal API on port 5000, alongside `npm run dev:client`. It starts an isolated temporary MongoDB instance and a Project Manager account: `admin@brandhub.demo` / `AdminPass123`. The first run may download a MongoDB binary. Preview data is disposable and does not include the full four-role catalog.
+
+## Configuration
+
+[Root environment example](.env.example) explains client overrides and provides a server configuration reference. [Server environment example](server/.env.example) is the template to copy for actual API startup.
+
+| Variable | Purpose / local value |
+| --- | --- |
+| `NODE_ENV` | `development`, `test`, or `production`. |
+| `PORT` | API port; default `5000`. |
+| `CLIENT_URL` | Exact allowed frontend origin, such as `http://127.0.0.1:5173`. |
+| `MONGODB_URI` | Private MongoDB connection string, including the development database name. |
+| `SESSION_SECRET` | Private random session secret, at least 32 characters. |
+| `COOKIE_NAME` | Session cookie name; `brandhub_session`. |
+| `COOKIE_SECURE` | `false` for local HTTP; `true` for production HTTPS. |
+| `COOKIE_SAME_SITE` | `lax` for same-site hosting; cross-site deployment may require `none` and secure cookies. |
+| `ASSET_STORAGE` | `gridfs` for the prototype upload backend. |
+| `MEDIA_IMAGE_MAX_BYTES` | Default image upload limit: `5242880` (5 MiB). Hosting limits may be lower. |
+| `MEDIA_VIDEO_MAX_BYTES` | Default video upload limit: `20971520` (20 MiB). Hosting limits may be lower. |
+| `GRIDFS_UPLOAD_BUDGET_BYTES` | GridFS upload budget: `262144000` (250 MiB). |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Optional server-only credentials for Cloudinary storage. |
+| `CLOUDINARY_ASSET_FOLDER` | Cloudinary folder, e.g. `brandhub/development`. |
+| `CLOUDINARY_SIGNED_URL_TTL_SECONDS` | Signed URL lifetime; example `300` seconds. |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` | Initial account seed configuration. |
+| `DEMO_USER_PASSWORD` | Password used when creating catalog demo users. |
+| `ALLOW_SEED`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | Additional gates/settings used by historical seed/import tooling; not all scripts use them. |
+| `VITE_API_URL` | Public API base URL; defaults to `/api`. |
+| `VITE_API_PROXY_TARGET` | Optional Vite development proxy override; default `http://127.0.0.1:5000`. |
+
+Client overrides belong in **`client/.env.local`**. A same-origin setup needs no client environment file. Never put MongoDB, session, or Cloudinary secrets in `VITE_` variables: those values are public browser configuration.
+
+## Login accounts
+
+The following fictional accounts belong to the prepared prototype dataset. Select the matching role and enter the email/password manually. A new database does not contain these accounts until seeded.
+
+| Login role | Email | Prepared prototype password |
 | --- | --- | --- |
-| `/` | Landing page | Public |
-| `/login`, `/signup` | Authentication | `/api/auth/*` |
-| `/app/dashboard` | Role-based overview | `/api/dashboard/stats` |
-| `/app/projects` | Projects and discovery | `/api/projects`, `/api/project-requests` |
-| `/app/assets` | Design-review image library | `/api/assets` |
-| `/app/assets/:id` | Review, revisions, comments | `/api/assets/:id/*`, `/api/comments` |
-| `/app/reviews` | Review queue | `/api/assets` |
-| `/app/bookmarks` | Saved assets | `/api/bookmarks` |
-| `/app/media` | Project images, posts, and reels | `/api/media` |
-| `/app/media/upload` | GridFS project upload | `/api/media/upload` |
-| `/app/profile`, `/app/settings` | Account and preferences | `/api/users`, `/api/dashboard/stats` |
+| Super Admin | `superadmin@brandhub.example` | `Brand123` |
+| Admin / Project Manager | `admin@brandhub.example` | `Brand123` |
+| Designer | `nisha.verma@brandhub.example` | `Brand123` |
+| Client | `iris.vale@brandhub.example` | `Brand123` |
 
-## Verification
+These published credentials are for a controlled demonstration dataset only. Use private, distinct credentials for an actual deployment. Setting `ADMIN_PASSWORD` alone does not change an existing user's password.
 
-```sh
-npm run lint --workspace @brandhub/server
-npm run test --workspace @brandhub/server
-npm run build --workspace @brandhub/client
+### Prepare the full prototype dataset
+
+Use a dedicated **non-production Atlas database named `brandhub_demo`**. The catalog seed enforces the database name and Atlas hostname. Configure its URI plus strong `ADMIN_PASSWORD` and `DEMO_USER_PASSWORD` values in `server/.env`.
+
+```bash
+npm run seed:brandhub:dry-run --workspace server
+npm run seed:brandhub --workspace server
+npm run verify:brandhub-seed --workspace server
 ```
 
-The most recent full server suite passed 54 tests, including an authenticated design-review lifecycle, concurrent-review protection, and GridFS image/video uploads. The production client build passed. Browser checks in Edge at desktop and mobile sizes covered dashboard, media gallery, video loading, reviews, bookmarks, and settings. Results and screenshots are in [the Phase 5–7 verification report](docs/testing/PHASE5_PHASE6_PHASE7_REPORT.md).
+Then, from `server/`:
 
-## Deployment status
+```bash
+node scripts/seedPrototypeRoles.js
+node scripts/prototypeWorkflow.js
+```
 
-`render.yaml` contains the API service skeleton and `client/vercel.json` supplies the SPA rewrite. A production deployment and deployed-URL smoke test have **not** been completed in this workspace. Before release, set production environment values on the selected hosts, point the client at the API, rotate credentials that were shared in chat, verify media usage rights, and test sign-in and private delivery at the live URLs. The local Atlas database `brandhub_demo` is a development demo, not a production database.
+The role script migrates legacy Admin roles, invalidates affected sessions, and ensures the single Super Admin. The workflow script resets catalog account passwords to `Brand123` and prepares a request/review example. These commands change the demo database; run them only against your own dedicated demonstration dataset. They are not part of normal application startup.
 
-Email recovery screens are present, but outbound email delivery still needs service configuration. The review-asset image flow and GridFS project-media flow remain separate. Real-time collaboration, bulk uploads, and production performance measurements are not implemented.
+## Creative workflow
+
+1. **Client submits a brief:** include the project description, contact details, company, and proposed INR amount.
+2. **Management reviews the request:** approve the brief and assign designers to the resulting project.
+3. **Designer creates deliverables:** upload an asset to an assigned project and submit it for review.
+4. **Client reviews the design:** approve it or request changes, with comments tied to the asset/version.
+5. **Designer revises:** upload a new revision and resubmit until approval.
+6. **Client uses simulated checkout:** eligible approved requests with an amount support a successful or declined demo payment. A saved receipt remains available after reload.
+7. **Management tracks delivery:** use scoped dashboards, review queues, and period-based PDF reports.
+
+Supplied demo photos/videos live in `client/public/demo-media/`. New uploads use GridFS when configured; existing Cloudinary-backed records remain supported. Designer deliverables also support document formats including PDF, DOCX, XLSX, PPTX, TXT, CSV, and ZIP, subject to endpoint validation and hosting limits.
+
+## Application routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Public landing page. |
+| `/login`, `/signup` | Sign in and Client registration. |
+| `/forgot-password`, `/reset-password`, `/verify-email`, `/change-password` | Account recovery, verification, and password screens. |
+| `/app/dashboard` | Role-scoped overview and analytics. |
+| `/app/projects`, `/app/projects/:id` | Project list and details. |
+| `/app/projects/new`, `/app/projects/:id/edit` | Management project creation/editing. |
+| `/app/assets`, `/app/assets/:id`, `/app/assets/upload` | Creative assets, revisions, reviews, and authorized uploads. |
+| `/app/media`, `/app/media/upload` | Media library and authorized uploads. |
+| `/app/requests`, `/app/requests/new` | Client briefs. |
+| `/app/management/requests` | Management request queue. |
+| `/app/management/users` | Project Manager team administration. |
+| `/app/super-admin/users` | Super Admin privileged account administration. |
+| `/app/reviews`, `/app/bookmarks` | Review queues and saved assets. |
+| `/app/reports` | Management PDF reports. |
+| `/app/profile`, `/app/settings` | Account and workspace preferences. |
+
+Legacy `/app/admin/users` and `/app/admin/requests` redirect to management routes. Access remains subject to authentication, role, and project membership.
+
+## API overview
+
+All API routes use the `/api` prefix. Protected requests require a session cookie; authenticated mutations also use the CSRF token supplied by the authentication flow.
+
+| API group | Responsibility |
+| --- | --- |
+| `GET /api/health` | API status and database state. |
+| `/api/auth` | Registration, login, session, password, and logout operations. |
+| `/api/users` | Authorized account administration. |
+| `/api/projects` | Project queries, creation, assignment, and updates. |
+| `/api/project-requests` | Client briefs, management decisions, and simulated payments. |
+| `/api/assets` | Deliverables, revisions, review actions, comments, and bookmarks. |
+| `/api/media` | Media metadata, uploads, and delivery. |
+| `/api/comments`, `/api/bookmarks` | Collaboration resources. |
+| `/api/dashboard` | Scoped counts and analytics. |
+| `/api/reports/summary` | Management report data. |
+| `/api/reports/workspace.pdf` | PDF download; optional `year` and `month` query parameters. |
+
+See the [API contract](docs/api/API_CONTRACT.md) for the original endpoint conventions and the [route implementations](server/src/routes/) for current behavior. Historical contracts may predate later prototype additions.
+
+## Project structure
+
+```text
+BrandHub-Creative-Asset-Management/
+|-- client/
+|   |-- public/           # Static media, themes, and public assets
+|   |-- src/
+|   |   |-- components/   # Shared UI, layouts, dashboards, asset controls
+|   |   |-- config/       # Role labels and access helpers
+|   |   |-- context/      # Authentication state
+|   |   |-- pages/        # Auth, projects, assets, media, requests, reports
+|   |   |-- routes/       # Application routing and protected routes
+|   |   |-- services/     # API clients
+|   |   `-- styles/       # Themes and workspace styling
+|   `-- tests/            # Unit checks and browser audits
+|-- server/
+|   |-- scripts/          # Initial accounts, demo seeds, media tools, preview
+|   |-- src/
+|   |   |-- config/       # Environment, database, sessions, Cloudinary
+|   |   |-- middleware/   # Authentication, CSRF, limits, error handling
+|   |   |-- models/       # MongoDB models
+|   |   |-- routes/       # Express endpoints
+|   |   |-- services/     # Access, storage, reports, workflow logic
+|   |   `-- validation/   # Request schemas
+|   |-- tests/            # API, authorization, and workflow tests
+|   `-- server.js         # Persistent server startup
+|-- api/index.mjs         # Vercel Express entry point
+|-- docs/                 # Contracts, screenshots, design and QA records
+|-- .env.example          # Environment reference
+|-- package.json          # Workspace commands
+`-- vercel.json           # Root build and routing configuration
+```
+
+## Development commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm ci` | Install the locked workspace dependencies. |
+| `npm run dev:client` | Start Vite; `npm run dev` is a client-only alias. |
+| `npm run dev:server` | Start the API with Node watch mode. |
+| `npm run start:server` | Start the API without watch mode. |
+| `npm run dev:preview-api` | Start the disposable database/API preview. |
+| `npm run lint` | Lint both workspaces. |
+| `npm run typecheck` | Run the client TypeScript check. |
+| `npm test` | Run client and server tests. |
+| `npm run test:server` | Run server tests only. |
+| `npm run build` | TypeScript build and Vite production bundle in `client/dist/`. |
+| `npm run preview` | Preview the built frontend; run the API separately. |
+| `npm run seed:admin` | Create the configured initial Project Manager. |
+
+Additional media preparation and catalog seed commands are defined in [server/package.json](server/package.json).
+
+## Testing and verification
+
+Run the standard checks before submitting code:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+API tests use isolated MongoDB test instances through `mongodb-memory-server`; a first run may need network access to download MongoDB. Tests should never target a shared production database.
+
+Browser audits live in `client/tests/browser/`. They accept `BRANDHUB_TEST_URL` and `BRANDHUB_BROWSER`, need the prepared four-role dataset and documented workflow examples, and now enter credentials through the regular login fields. Set the URL explicitly because script defaults vary.
+
+PowerShell example:
+
+```powershell
+$env:BRANDHUB_TEST_URL = "http://127.0.0.1:5173"
+$env:BRANDHUB_BROWSER = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+node client/tests/browser/role-audit.mjs
+node client/tests/browser/analytics-audit.mjs
+```
+
+Interaction and payment audits are also available. Payment tests create demonstration requests and receipts, so use a dedicated test dataset. Historical [test reports](docs/testing/) record earlier verification; they are not proof that a new deployment has passed.
+
+## Deployment
+
+### Vercel: same-origin frontend and API
+
+1. Import this repository with the **repository root** as Root Directory and framework preset **Other**.
+2. Use the root `vercel.json`: it builds `client/dist`, serves public media, and forwards `/api/*` to `api/index.mjs`.
+3. Configure server environment variables in Vercel: `MONGODB_URI`, `SESSION_SECRET`, `CLIENT_URL`, `ASSET_STORAGE=gridfs`, `COOKIE_SECURE=true`, and `COOKIE_SAME_SITE=lax`. Use your deployed HTTPS origin for `CLIENT_URL`.
+4. Leave `VITE_API_URL` unset for same-origin requests. Permit the deployment's database connections in Atlas Network Access.
+5. Keep uploaded files below 4 MB for this prototype's Vercel request envelope. Application-level limits do not override hosting limits. Supplied videos are static assets.
+6. Verify the deployed health endpoint, login/logout, cookie persistence, CSRF rejection, nested-route refreshes, authorized uploads, reports, and role isolation.
+
+### Separate frontend and persistent API
+
+Build the frontend with `npm run build` and run the backend with `npm run start:server` on a Node host. Set `VITE_API_URL` to the public backend URL ending in `/api` before building the frontend. Set `CLIENT_URL` to the exact frontend origin. For genuinely cross-site cookies, use HTTPS, `COOKIE_SECURE=true`, and `COOKIE_SAME_SITE=none`, then verify actual browser behavior.
+
+The earlier [deployment guide](docs/deployment/PHASE2_DEPLOYMENT.md) contains historical phase notes. The root Vercel configuration and this README describe the current combined deployment path. No live deployment is claimed here.
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| API refuses to start | Confirm `server/.env` exists, MongoDB is reachable, and `SESSION_SECRET` has at least 32 characters. |
+| API calls fail from the frontend | Confirm port 5000 is running and the Vite proxy points to the correct API host/port. |
+| Login succeeds but the session does not persist | Use the same browser hostname as `CLIENT_URL`; check cookie secure/same-site settings and HTTPS. |
+| Login returns a role mismatch | Select the account's stored role. Admin accounts use Project Manager. |
+| Published prototype credentials do not work | Confirm the correct database was seeded and the prototype workflow password reset was run; ordinary seed passwords come from your environment. |
+| Dashboard shows no projects | New databases are empty; create/assign projects or prepare the demo catalog. Account visibility is intentionally scoped. |
+| Upload fails on Vercel | Check both application size limits and the host request limit; keep prototype uploads below 4 MB. |
+| Browser audit cannot launch | Set `BRANDHUB_BROWSER` to an installed Chromium-compatible executable. |
+| MongoDB test/preview download fails | Check network access or configure a locally cached supported MongoDB binary. |
+| Recovery screen does not send email | Email delivery has not been verified; configure and test a delivery integration before relying on recovery in production. |
+
+## Documentation and contribution
+
+- [Contribution rules and review workflow](CONTRIBUTING.md)
+- [API contract](docs/api/API_CONTRACT.md)
+- [Storage and hybrid media notes](docs/HYBRID_MEDIA.md)
+- [UI atmosphere specification](docs/ui/ATMOSPHERE_UI.md)
+- [Landing page notes](docs/landing-page.md)
+- [Testing guide](docs/testing.md)
+- [Phase plan](docs/plans/BrandHub_Final_Phase_Plan.md)
+- [Decision register](docs/decisions.md)
+
+Some supporting documents describe earlier implementation phases, including an obsolete scaffold-only local setup guide. Use this README for current startup instructions and consult source files when historical notes differ.
+
+## Project status and license
+
+BrandHub is an internship prototype with role-based collaboration, local demonstration assets, and database-backed workflows. Email delivery, production operations, and live deployment acceptance require further verification. Simulated payments are not a payment gateway integration.
+
+No license file is currently included. Confirm permission with the repository owner before redistribution, and review third-party media provenance before reusing bundled assets.
