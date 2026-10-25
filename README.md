@@ -429,3 +429,9 @@ Some supporting documents describe earlier implementation phases, including an o
 BrandHub is an internship prototype with role-based collaboration, local demonstration assets, and database-backed workflows. Email delivery, production operations, and live deployment acceptance require further verification. Simulated payments are not a payment gateway integration.
 
 No license file is currently included. Confirm permission with the repository owner before redistribution, and review third-party media provenance before reusing bundled assets.
+
+## Vercel
+
+The repository is configured for one Vercel project with two services: public `client` (Vite) and public `server` (Express at `/api/*`). The browser uses same-origin `/api`; this static frontend has no server-side caller and needs no runtime binding. The confirmed topology uses one public domain with no internal-only service or runtime binding.
+
+Use repository root as Root Directory. See [the Vercel services guide](docs/deployment/VERCEL_SERVICES.md) for exact environment variables and checks; `.env.vercel.example` is a copyable placeholder reference. The backend entry is `server/index.js`; the root legacy API wrapper is no longer used.
