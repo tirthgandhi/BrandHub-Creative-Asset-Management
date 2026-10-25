@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
 import type { Theme } from "../data/themes";
 export function FilmPlayer({ scene, label }: { scene: Theme; label: string }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -55,7 +54,7 @@ export function FilmPlayer({ scene, label }: { scene: Theme; label: string }) {
     </div>
   );
 }
-export function FilmSection({ onFilm }: { onFilm: () => void }) {
+export function FilmSection() {
   return (
     <section id="films" className="section film-section">
       <div className="section-top">
@@ -66,9 +65,7 @@ export function FilmSection({ onFilm }: { onFilm: () => void }) {
         <h2>
           Ideas <em>in motion.</em>
         </h2>
-        <button className="text-button" onClick={onFilm}>
-          Watch the featured film <ArrowUpRight size={18} />
-        </button>
+
       </div>
       <div className="film-grid">
         <article className="featured-film">

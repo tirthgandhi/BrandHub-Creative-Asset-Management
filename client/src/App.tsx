@@ -6,7 +6,7 @@ import { useReducedMotion } from "./hooks/useReducedMotion";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { CreativeGallery } from "./components/CreativeGallery";
-import { FilmSection, FilmPlayer } from "./components/FilmSection";
+import { FilmSection } from "./components/FilmSection";
 import {
   CreativeMarquee,
   VisionSection,
@@ -28,7 +28,7 @@ export default function App() {
   const atmosphere = useTimeTheme();
   const reduced = useReducedMotion();
   const root = useRef<HTMLDivElement>(null);
-  const [modal, setModal] = useState<"film" | "credits" | null>(null);
+  const [modal, setModal] = useState<"credits" | null>(null);
   const [credits, setCredits] = useState<Credit[]>([]);
   const [creditsError, setCreditsError] = useState(false);
   useEffect(() => {
@@ -77,30 +77,18 @@ export default function App() {
       <Navbar {...atmosphere} />
       <main id="main">
         <div className="sky-journey">
-        <Hero theme={atmosphere.theme} onFilm={() => setModal("film")} />
+        <Hero theme={atmosphere.theme} />
         <CreativeMarquee />
         <VisionSection />
         </div>
         <CreativeGallery />
-        <FilmSection onFilm={() => setModal("film")} />
+        <FilmSection />
         <WorkflowSection />
         <ThemeExperience theme={atmosphere.theme} select={atmosphere.select} />
         <EditorialSection />
         <FinalCTA />
       </main>
       <Footer onCredits={() => setModal("credits")} />
-      {modal === "film" && (
-        <Modal title="Room for the unexpected" close={() => setModal(null)}>
-          <FilmPlayer
-            scene={atmosphere.theme}
-            label={`${atmosphere.theme} atmosphere film`}
-          />
-          <p className="detail-caption">
-            A moment of inspiration, in the {atmosphere.theme} atmosphere. Press
-            play to begin.
-          </p>
-        </Modal>
-      )}
       {modal === "credits" && (
         <Modal title="Behind the imagery" close={() => setModal(null)}>
           <p>
