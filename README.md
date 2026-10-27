@@ -473,29 +473,6 @@ The earlier [deployment guide](docs/deployment/PHASE2_DEPLOYMENT.md) contains hi
 
 ## 🔧 Troubleshooting
 
-### Signup/login: database temporarily unavailable
-
-This response means API initialization failed; the original handler also used it for missing or invalid configuration. It does not indicate an invalid signup form.
-
-1. In Vercel **Project Settings → Environment Variables**, confirm `MONGODB_URI` is configured for **Production**, points to the intended database, and contains a valid Atlas database username/password. URL-encode special characters in connection-string credentials.
-2. Set `SESSION_SECRET` to a private random value of at least 32 characters. Do not copy the placeholder from an example file.
-3. In Atlas, confirm the cluster is running, the database user has access, and Network Access permits the Vercel deployment's connections.
-4. Set `CLIENT_URL` to the actual HTTPS site origin and use secure cookies. Redeploy after environment changes.
-5. Check Vercel server runtime logs and `/api/health`. Retry signup only after the API is healthy. Never paste the connection string or session secret into a public issue.
-
-
-| Symptom | What to check |
-| --- | --- |
-| API refuses to start | Confirm `server/.env` exists, MongoDB is reachable, and `SESSION_SECRET` has at least 32 characters. |
-| API calls fail from the frontend | Confirm port 5000 is running and the Vite proxy points to the correct API host/port. |
-| Login succeeds but the session does not persist | Use the same browser hostname as `CLIENT_URL`; check cookie secure/same-site settings and HTTPS. |
-| Login returns a role mismatch | Select the account's stored role. Admin accounts use Project Manager. |
-| Published prototype credentials do not work | Confirm the correct database was seeded and the prototype workflow password reset was run; ordinary seed passwords come from your environment. |
-| Dashboard shows no projects | New databases are empty; create/assign projects or prepare the demo catalog. Account visibility is intentionally scoped. |
-| Upload fails on Vercel | Check both application size limits and the host request limit; keep prototype uploads below 4 MB. |
-| Browser audit cannot launch | Set `BRANDHUB_BROWSER` to an installed Chromium-compatible executable. |
-| MongoDB test/preview download fails | Check network access or configure a locally cached supported MongoDB binary. |
-| Recovery screen does not send email | Email delivery has not been verified; configure and test a delivery integration before relying on recovery in production. |
 
 ---
 
